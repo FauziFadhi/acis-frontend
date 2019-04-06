@@ -1,5 +1,6 @@
 import pkg from './package'
 
+const webpack = require('webpack')
 export default {
   mode: 'universal',
 
@@ -27,12 +28,15 @@ export default {
   ** Global CSS
   */
   css: [
+    'jquery-bracket/dist/jquery.bracket.min.css'
   ],
 
   /*
   ** Plugins to load before mounting the App
   */
   plugins: [
+    {src:'~/plugins/jquery.bracket.min.js', ssr:false},
+    {src:'~/plugins/jquery.js', ssr:false}
   ],
 
   /*
@@ -47,6 +51,15 @@ export default {
   ** Build configuration
   */
   build: {
+    vendor: ['jquery', 'bootstrap'],
+    plugins: [
+      // set shortcuts as global for bootstrap
+      new webpack.ProvidePlugin({
+        $: 'jquery',
+        jQuery: 'jquery',
+        'window.jQuery': 'jquery'
+      })
+    ],
     /*
     ** You can extend webpack config here
     */
