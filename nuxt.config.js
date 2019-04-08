@@ -14,8 +14,14 @@ export default {
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
       { hid: 'description', name: 'description', content: pkg.description }
     ],
+    script: [
+      { src: '/js/jquery.js' },
+      { src: '/js/bootstrap.bundle.min.js' },
+      { src: '/js/adminlte.min.js' },
+    ],
     link: [
-      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
+      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+      { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700' }
     ]
   },
 
@@ -29,15 +35,14 @@ export default {
   */
   css: [
     'jquery-bracket/dist/jquery.bracket.min.css',
-    'bootstrap-vue/dist/bootstrap-vue.min.css'
+    '~/assets/font-awesome/css/font-awesome.min.css',
+    '~/assets/css/adminlte.min.css'
   ],
 
   /*
   ** Plugins to load before mounting the App
   */
   plugins: [
-    {src:'~/plugins/jquery.js', ssr:false},
-    {src:'~/plugins/bootstrap-vue.min.js', ssr:false},
     {src:'~/plugins/jquery.bracket.min.js', ssr:false},
   ],
 
