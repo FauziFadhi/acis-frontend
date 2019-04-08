@@ -28,15 +28,17 @@ export default {
   ** Global CSS
   */
   css: [
-    'jquery-bracket/dist/jquery.bracket.min.css'
+    'jquery-bracket/dist/jquery.bracket.min.css',
+    'bootstrap-vue/dist/bootstrap-vue.min.css'
   ],
 
   /*
   ** Plugins to load before mounting the App
   */
   plugins: [
+    {src:'~/plugins/jquery.js', ssr:false},
+    {src:'~/plugins/bootstrap-vue.min.js', ssr:false},
     {src:'~/plugins/jquery.bracket.min.js', ssr:false},
-    {src:'~/plugins/jquery.js', ssr:false}
   ],
 
   /*
