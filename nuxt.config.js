@@ -39,7 +39,8 @@ export default {
   css: [
     'jquery-bracket/dist/jquery.bracket.min.css',
     '~/assets/font-awesome/css/font-awesome.min.css',
-    '~/assets/css/adminlte.min.css'
+    '~/assets/css/adminlte.min.css',
+    'daterangepicker/daterangepicker.css',
   ],
 
   /*

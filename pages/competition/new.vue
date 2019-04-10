@@ -11,7 +11,7 @@
     <div class="col-md-8">
       <div class="card card-primary">
         <div class="card-header p-2">
-          <h3 class="card-title">Create New Competition</h3>
+          <h3 class="card-title">Competition Information</h3>
         </div>
         <div class="card-body">
           <div class="form-group">
@@ -26,6 +26,19 @@
               <textarea name id cols="30" rows="10" class="form-control"></textarea>
             </div>
           </div>
+          <div class="form-group">
+            <label class="col-sm-2 control label">Date</label>
+            <div class="col-sm-10">
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">
+                    <i class="fa fa-calendar"></i>
+                  </span>
+                </div>
+                <input type="text" class="form-control float-right" id="reservation">
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -33,7 +46,14 @@
 </template>
 
 <script>
-export default {};
+import daterangepicker from "daterangepicker";
+export default {
+  mounted() {
+    $(function() {
+      $("#reservation").daterangepicker();
+    });
+  }
+};
 </script>
 
 <style>
