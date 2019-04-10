@@ -37,22 +37,22 @@
             <a href="#" class="nav-link active">
               <i class="nav-icon fa fa-dashboard"></i>
               <p>
-                Starter Pages
+                Competition
                 <i class="right fa fa-angle-left"></i>
               </p>
             </a>
             <ul class="nav nav-treeview">
               <li class="nav-item">
-                <a href="#" class="nav-link active">
+                <nuxt-link class="nav-link active" to="/competition/new">
                   <i class="fa fa-circle-o nav-icon"></i>
-                  <p>Active Page</p>
-                </a>
+                  <p>Create</p>
+                </nuxt-link>
               </li>
               <li class="nav-item">
-                <a href="#" class="nav-link">
+                <nuxt-link to="/competition/elimination/bracket" class="nav-link">
                   <i class="fa fa-circle-o nav-icon"></i>
-                  <p>Inactive Page</p>
-                </a>
+                  <p>Bracket</p>
+                </nuxt-link>
               </li>
             </ul>
           </li>
