@@ -34,16 +34,16 @@
           <!-- Add icons to the links using the .nav-icon class
           with font-awesome or any other icon font library-->
           <li class="nav-item has-treeview menu-open">
-            <a href="#" class="nav-link active">
+            <nuxt-link to="/competition/" class="nav-link">
               <i class="nav-icon fa fa-dashboard"></i>
               <p>
                 Competition
                 <i class="right fa fa-angle-left"></i>
               </p>
-            </a>
+            </nuxt-link>
             <ul class="nav nav-treeview">
               <li class="nav-item">
-                <nuxt-link class="nav-link active" to="/competition/new">
+                <nuxt-link class="nav-link" to="/competition/new">
                   <i class="fa fa-circle-o nav-icon"></i>
                   <p>Create</p>
                 </nuxt-link>

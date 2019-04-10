@@ -4,6 +4,9 @@ const webpack = require('webpack')
 export default {
   mode: 'universal',
 
+  router: {
+    linkActiveClass: 'active'
+  },
   /*
   ** Headers of the page
   */
