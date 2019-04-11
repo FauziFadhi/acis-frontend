@@ -20,7 +20,9 @@
     "indonesia-cities-regencies": "^2.0.0",
     "jquery": "^3.3.1",
     "jquery-bracket": "^0.11.1",
-    "nuxt": "^2.4.0"
+    "nuxt": "^2.4.0",
+    "select2": "^4.0.6-rc.1",
+    "vue-select": "^2.6.4"
   },
   "devDependencies": {
     "nodemon": "^1.18.9"

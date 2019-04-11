@@ -39,6 +39,13 @@
               </div>
             </div>
           </div>
+          <div class="form-group">
+            <label class="col-sm-2 control label">Province</label>
+            <div class="col-sm-10">
+              <v-select v-model="provinsi" placeholder="Type Here" :options="Object.keys(provinces)"></v-select>
+            </div>
+            {{provinsi}}
+          </div>
         </div>
       </div>
     </div>
@@ -47,19 +54,22 @@
 
 <script>
 import daterangepicker from "daterangepicker";
+
 export default {
-  data() {
-    return { indonesia: require("indonesia-cities-regencies"),
-      gg: '2'
+  data() {  
+    return { 
+      selected: 'sdsd',
+      indonesia: require("indonesia-cities-regencies"),
+      provinsi: ''
     };
   },
   computed: {
-    provinces(){
-      return _.groupBy(this.indonesia.getAll(),'province')
+    provinces() {
+      // return this.indonesia.getAll()
+      return _.groupBy(this.indonesia.getAll(),"province");
     }
   },
   mounted() {
-    
     $(function() {
       $("#reservation").daterangepicker();
     });

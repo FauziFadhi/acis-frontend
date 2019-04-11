@@ -39,8 +39,11 @@ export default {
   css: [
     'jquery-bracket/dist/jquery.bracket.min.css',
     '~/assets/font-awesome/css/font-awesome.min.css',
-    '~/assets/css/adminlte.min.css',
     'daterangepicker/daterangepicker.css',
+    'select2/dist/css/select2.min.css',
+
+    
+    '~/assets/css/adminlte.min.css',
   ],
 
   /*
@@ -48,6 +51,7 @@ export default {
   */
   plugins: [
     {src:'~/plugins/jquery.bracket.min.js', ssr:false},
+    { src: '~/plugins/vue-select', ssr: false },
   ],
 
   /*
