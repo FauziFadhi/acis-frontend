@@ -42,12 +42,18 @@
           <div class="form-group">
             <label class="col-sm-2 control label">Province</label>
             <div class="col-sm-10">
-              <v-select v-model="provinsi" placeholder="Type Here" :options="Object.keys(provinces)"></v-select>
+              <v-select v-model="prov" id="province" placeholder="Type Here" :options="Object.keys(provinces)"></v-select>
             </div>
-            {{provinsi}}
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control label">City / Region</label>
+            <div class="col-sm-10">
+              <v-select v-model="city" id="city" placeholder="Type Here" label="name" :options="cities"></v-select>
+            </div>
           </div>
         </div>
       </div>
+      {{city.id}}
     </div>
   </div>
 </template>
@@ -55,19 +61,23 @@
 <script>
 import daterangepicker from "daterangepicker";
 
+//TODO: Onchange province
 export default {
-  data() {  
-    return { 
-      selected: 'sdsd',
-      indonesia: require("indonesia-cities-regencies"),
-      provinsi: ''
+  data() {
+    return {
+      indonesia: require("~/static/city_province.json"),
+      prov: "",
+      city: ""
     };
   },
   computed: {
     provinces() {
-      // return this.indonesia.getAll()
-      return _.groupBy(this.indonesia.getAll(),"province");
-    }
+      return _.groupBy(this.indonesia, "province");
+    },
+
+    cities() {
+      return _.filter(this.indonesia, ["province", this.prov]);
+    },
   },
   mounted() {
     $(function() {
