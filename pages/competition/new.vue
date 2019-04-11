@@ -23,7 +23,7 @@
           <div class="form-group">
             <label class="col-sm-2 control label">Address</label>
             <div class="col-sm-10">
-              <textarea name id cols="30" rows="10" class="form-control"></textarea>
+              <textarea name id cols="30" rows="3" class="form-control"></textarea>
             </div>
           </div>
           <div class="form-group">
@@ -48,7 +48,18 @@
 <script>
 import daterangepicker from "daterangepicker";
 export default {
+  data() {
+    return { indonesia: require("indonesia-cities-regencies"),
+      gg: '2'
+    };
+  },
+  computed: {
+    provinces(){
+      return _.groupBy(this.indonesia.getAll(),'province')
+    }
+  },
   mounted() {
+    
     $(function() {
       $("#reservation").daterangepicker();
     });

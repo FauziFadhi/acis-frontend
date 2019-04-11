@@ -67,13 +67,15 @@
 
 <script>
 import sidebar from "~/components/sidebar/sidebar.vue";
+import rightSideBar from "~/components/sidebar/rightSideBar.vue";
 import navbar from "~/components/navbar/navbar.vue";
 import Footer from "~/components/footer.vue";
 export default {
   components: {
     navbar,
     sidebar,
-    Footer
+    Footer,
+    rightSideBar
   }
 };
 </script>
