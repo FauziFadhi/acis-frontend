@@ -41,6 +41,7 @@ export default {
     '~/assets/font-awesome/css/font-awesome.min.css',
     'daterangepicker/daterangepicker.css',
     'select2/dist/css/select2.min.css',
+    'bootstrap-vue/dist/bootstrap-vue.min.css',
 
     
     '~/assets/css/adminlte.min.css',

@@ -15,7 +15,7 @@
     <div class="col-md-5">
       <div class="card card-primary">
         <div class="card-header">
-          <h3 class="card-title">Bracket Elimination</h3>
+          <h3 class="card-title">Top 3 Elimination</h3>
         </div>
         <div class="card-body overflow-auto" style="500px;">
           <table class="table table-condensed">
