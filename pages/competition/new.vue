@@ -62,7 +62,7 @@
     <!-- Competition Information -->
     <div class="col-md-8">
       <div class="card card-primary">
-        <div class="card-header p-2">
+        <div class="card-header">
           <h3 class="card-title">Competition Information</h3>
         </div>
         <div class="card-body">
@@ -150,7 +150,8 @@ export default {
           id: "4",
           name: "Standard Nasional SMA Putra 18 Menter"
         }
-      ]
+      ],
+      table: []
     };
   },
   created(){

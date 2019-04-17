@@ -57,13 +57,13 @@
             </ul>
           </li>
           <li class="nav-item">
-            <a href="#" class="nav-link">
+            <nuxt-link to="/participants" class="nav-link">
               <i class="nav-icon fa fa-th"></i>
               <p>
-                Simple Link
+                Participants
                 <span class="right badge badge-danger">New</span>
               </p>
-            </a>
+            </nuxt-link>
           </li>
         </ul>
       </nav>
