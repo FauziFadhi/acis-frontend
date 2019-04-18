@@ -5,7 +5,7 @@
         <div class="card-header">
           <h3 class="card-title">Bracket Elimination</h3>
         </div>
-        <div class="card-body overflow-auto" style="height: 680px">
+        <div class="card-body overflow-auto" style="height: 720px">
           <div id="big" class="align-middle">
             <div class="demo"></div>
           </div>

@@ -34,7 +34,7 @@
           <!-- Add icons to the links using the .nav-icon class
           with font-awesome or any other icon font library-->
           <li class="nav-item has-treeview menu-open">
-            <nuxt-link to="/competition/" class="nav-link">
+            <nuxt-link to="/dashboard/competition/" class="nav-link">
               <i class="nav-icon fa fa-dashboard"></i>
               <p>
                 Competition
@@ -43,13 +43,13 @@
             </nuxt-link>
             <ul class="nav nav-treeview">
               <li class="nav-item">
-                <nuxt-link class="nav-link" to="/competition/new">
+                <nuxt-link class="nav-link" to="/dashboard/competition/new">
                   <i class="fa fa-circle-o nav-icon"></i>
                   <p>Create</p>
                 </nuxt-link>
               </li>
               <li class="nav-item">
-                <nuxt-link to="/competition/elimination/bracket" class="nav-link">
+                <nuxt-link to="/dashboard/competition/elimination/bracket" class="nav-link">
                   <i class="fa fa-circle-o nav-icon"></i>
                   <p>Bracket</p>
                 </nuxt-link>
@@ -57,7 +57,7 @@
             </ul>
           </li>
           <li class="nav-item">
-            <nuxt-link to="/participants" class="nav-link">
+            <nuxt-link to="/dashboard/participants" class="nav-link">
               <i class="nav-icon fa fa-th"></i>
               <p>
                 Participants
