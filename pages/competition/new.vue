@@ -8,11 +8,7 @@
         <div class="card-body">
           <div class="col-md-12">
             <b-form-group>
-              <b-form-radio-group
-                v-model="selected.area"
-                text-field="name"
-                :options="options"
-              >
+              <b-form-radio-group v-model="selected.area" text-field="name" :options="options">
                 <span class="ml-3 text-bold">Area :</span>
                 {{ selected.area }}
               </b-form-radio-group>
@@ -21,39 +17,41 @@
           <hr>
           <b-form-group>
             <v-select
-              v-model="selected.category"
-              id="province"
-              placeholder="Type Here"
-              :options="category"
+              style="max-height:300px;"
+              v-model="selected.categories"
+              multiple
+              :closeOnSelect="false"
+              height="50"
+              hide-selected
+              max-height="200px"
+              placeholder="Type Here for search"
+              :options="categories"
               label="name"
             ></v-select>
           </b-form-group>
-          <b-form-group>
-            <div class="overflow-auto" style="500px;">
-              <table class="table table-condensed">
-                <tbody>
+          <br>
+          <b-form-group class="mb-0">
+            <div>
+
+              <table class="table table-condensed mb-0">
+                <thead class="d-block">
                   <tr>
                     <th style="width: 40px">#</th>
-                    <th>Label</th>
+                    <th style="width:100%;">Category</th>
                     <th style="width: 40px"></th>
                   </tr>
-                  <tr>
-                    <td>a</td>
-                    <td>d</td>
-                    <td>d</td>
+                </thead>
+                <tbody class="overflow-auto d-block" style="max-height:400px;">
+                  <tr v-for="category,index in orderCategory">
+                    <td style="width: 40px">{{ index + 1 }}</td>
+                    <td style="width:100%;">{{category.name}}</td>
+                    <td style="width: 40px">
+                      <button v-on:click="removeCategories(index)" class="btn btn-sm btn-danger">x</button>
+                    </td>
                   </tr>
                 </tbody>
               </table>
             </div>
-          </b-form-group>
-          <hr>
-          <b-form-group>
-            <label class="mr-lg-3 ml-5">
-              THB
-            </label>
-            <b-button>
-              Upload
-            </b-button>
           </b-form-group>
         </div>
       </div>
@@ -113,10 +111,15 @@
                 :options="cities"
               ></v-select>
             </div>
+            <hr>
+            <b-form-group>
+              <label class="mr-lg-3 ml-5">THB</label>
+              <b-button v-on:click="getDate">Upload</b-button>
+            </b-form-group>
           </div>
         </div>
       </div>
-      {{selected}}
+      {{selected}}{{category}}
     </div>
   </div>
 </template>
@@ -129,11 +132,15 @@ export default {
   data() {
     return {
       indonesia: require("~/static/city_province.json"),
-      selected: {},
-      date: "a",
+      selected: {
+        categories: [],
+        date: ""
+      },
+      category: [],
+      counter: 1,
       data: {},
       options: [{ id: "1", name: "Indoor" }, { id: "2", name: "Outdoor" }],
-      category: [
+      categories: [
         {
           id: "1",
           name: "Recurve SMA Putra 18 Menter"
@@ -149,43 +156,68 @@ export default {
         {
           id: "4",
           name: "Standard Nasional SMA Putra 18 Menter"
+        },
+        {
+          id: "1",
+          name: "Recurve SMA Putra 18 Menter1"
+        },
+        {
+          id: "2",
+          name: "Compound SMA Putra 30 Menter1"
+        },
+        {
+          id: "3",
+          name: "Compound SMA Putri 18 Menter1"
+        },
+        {
+          id: "4",
+          name: "Standard Nasional SMA Putra 18 Menter1"
         }
-      ],
-      table: []
+      ]
     };
   },
-  created(){
-   
+  created() {},
+  methods: {
+    removeCategories: function(index) {
+      // console.log(this.selected.categories.fi);
+      this.selected.categories.splice(index, 1);
+    }
   },
   computed: {
+    orderCategory: function() {
+      return _.orderBy(this.selected.categories, "name");
+    },
+
+    getDate: function() {
+      this.selected.date = $("#reservation").val();
+    },
     provinces() {
       return _.groupBy(this.indonesia, "province");
     },
 
     cities() {
       return _.filter(this.indonesia, ["province", this.selected.prov]);
-    },
-    getDate(){
-      console.log("getDate");
     }
   },
   mounted() {
-     $(function() {
-      $("#reservation").daterangepicker({
-        function(start, end){
-          selected.date = start
-        }
-      });
+    $(function() {
+      $("#reservation").daterangepicker();
     });
-  },
-  methods: {
-    
   }
 };
 </script>
 
 <style>
+
 .custom-control-label {
   position: initial !important;
+}
+
+::-webkit-scrollbar {
+  width: 2px;
+  height: 1px;
+}
+::-webkit-scrollbar-thumb {
+  background: rgb(123, 143, 255);
 }
 </style>
