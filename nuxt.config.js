@@ -21,10 +21,10 @@ export default {
       { src: '/js/jquery.js' },
       { src: '/js/bootstrap.bundle.min.js' },
       { src: '/js/adminlte.min.js' },
+      { src: '/js/now-ui-kit.js' }
     ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
-      { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700' }
     ]
   },
 
@@ -40,19 +40,15 @@ export default {
     'jquery-bracket/dist/jquery.bracket.min.css',
     '~/assets/font-awesome/css/font-awesome.min.css',
     'daterangepicker/daterangepicker.css',
-    'select2/dist/css/select2.min.css',
-    'bootstrap-vue/dist/bootstrap-vue.min.css',
-
-    
-    '~/assets/css/adminlte.min.css',
-  ],
+    'select2/dist/css/select2.min.css'
+    ],
 
   /*
   ** Plugins to load before mounting the App
   */
   plugins: [
     {src:'~/plugins/jquery.bracket.min.js', ssr:false},
-    { src: '~/plugins/vue-select', ssr: false },
+    { src: '~/plugins/vue-select', ssr: false }
   ],
 
   /*

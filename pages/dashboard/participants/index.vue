@@ -2,7 +2,7 @@
   <div class="row">
     <div class="col-12">
       <!-- Custom Tabs -->
-      <div class="card">
+      <div class="card card-danger">
         <div class="card-header d-flex p-0">
           <h3 class="card-title p-3">Category</h3>
           <ul class="nav nav-pills ml-auto p-2">
@@ -22,21 +22,21 @@
           <div class="tab-content">
             <div class="tab-pane active" id="tab_1">
               <div class="overflow-auto" style="height: 680px; overflow:hidden;">
-              <table class="table table-condensed">
-                <tbody>
-                  <tr>
-                    <th style="width: 40px">#</th>
-                    <th>Label</th>
-                    <th style="width: 40px">action</th>
-                  </tr>
-                  <tr v-for="i in 30" :key="i">
-                    <td>aaaaaaaaaa</td>
-                    <td>aaaaaaaaaa</td>
-                    <td>aaaaaaaaaa</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+                <table class="table table-condensed">
+                  <tbody>
+                    <tr>
+                      <th style="width: 40px">#</th>
+                      <th>Label</th>
+                      <th style="width: 40px">action</th>
+                    </tr>
+                    <tr v-for="i in 30" :key="i">
+                      <td>aaaaaaaaaa</td>
+                      <td>aaaaaaaaaa</td>
+                      <td>aaaaaaaaaa</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
             <!-- /.tab-pane -->
             <div class="tab-pane" id="tab_2">
@@ -73,13 +73,15 @@
 <script>
 export default {
   data() {
-    participants: [
-      {
-        id: "1",
-        name: "Fauzi Fadhillah",
-        club: "BACS"
-      }
-    ];
+    return {
+      participants: [
+        {
+          id: "1",
+          name: "Fauzi Fadhillah",
+          club: "BACS"
+        }
+      ]
+    }
   }
 };
 </script>

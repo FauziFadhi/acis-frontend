@@ -71,6 +71,14 @@ import rightSideBar from "~/components/sidebar/rightSideBar.vue";
 import navbar from "~/components/navbar/navbar.vue";
 import Footer from "~/components/footer.vue";
 export default {
+  head: {
+    link: [
+      { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700' },
+      { rel: "stylesheet", href: "/css/bootstrap-vue.min.css" },
+      { rel: "stylesheet", href: "/css/adminlte.min.css" }
+    ]
+  },
+  
   components: {
     navbar,
     sidebar,

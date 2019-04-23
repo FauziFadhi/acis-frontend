@@ -209,10 +209,6 @@ export default {
 
 <style>
 
-.custom-control-label {
-  position: initial !important;
-}
-
 ::-webkit-scrollbar {
   width: 2px;
   height: 1px;

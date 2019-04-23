@@ -125,4 +125,7 @@ export default {
 </script>
 
 <style>
+.badge{
+  font-size: 65%;
+}
 </style>
