@@ -57,13 +57,18 @@ export default {
   modules: [
     // Doc: https://bootstrap-vue.js.org/docs/
     'bootstrap-vue/nuxt',
+    '@nuxtjs/axios',
   ],
+
+  axios: {
+
+  },
 
   /*
   ** Build configuration
   */
   build: {
-    vendor: ['jquery', 'bootstrap'],
+    vendor: ['jquery', 'bootstrap', 'axios'],
     plugins: [
       // set shortcuts as global for bootstrap
       new webpack.ProvidePlugin({
