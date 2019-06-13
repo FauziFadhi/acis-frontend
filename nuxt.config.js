@@ -41,13 +41,13 @@ export default {
     '~/assets/font-awesome/css/font-awesome.min.css',
     'daterangepicker/daterangepicker.css',
     'select2/dist/css/select2.min.css'
-    ],
+  ],
 
   /*
   ** Plugins to load before mounting the App
   */
   plugins: [
-    {src:'~/plugins/jquery.bracket.min.js', ssr:false},
+    { src: '~/plugins/jquery.bracket.min.js', ssr: false },
     { src: '~/plugins/vue-select', ssr: false }
   ],
 
@@ -58,10 +58,18 @@ export default {
     // Doc: https://bootstrap-vue.js.org/docs/
     'bootstrap-vue/nuxt',
     '@nuxtjs/axios',
+    '@nuxtjs/toast'
   ],
 
   axios: {
 
+  },
+
+  toast: {
+    position: 'top-center',
+    duration: 3000,
+    className: ["font-weight-bold"],
+    closeOnSwipe: true
   },
 
   /*

@@ -3,8 +3,8 @@
     <div class="index-page sidebar-collapse">
     <!-- Navbar -->
     <nav
-      class="navbar navbar-expand-lg bg-primary fixed-top navbar-transparent mb-0"
-      color-on-scroll="500"
+      class="navbar navbar-expand-lg bg-primary fixed-top mb-0"
+      color-on-scroll="500" style="opacity:50%;"
     >
       <div class="container">
         <div class="navbar-translate">
@@ -191,7 +191,7 @@ export default {
 
 <style>
 body {
-  background-color: transparent !important;
+  background-color: transparent;
 }
 
 ::-webkit-scrollbar {

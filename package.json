@@ -13,6 +13,7 @@
   "dependencies": {
     "@nuxtjs/axios": "^5.5.1",
     "@nuxtjs/pwa": "^3.0.0-beta.14",
+    "@nuxtjs/toast": "^3.2.1",
     "bootstrap": "^4.1.3",
     "bootstrap-vue": "^2.0.0-rc.11",
     "cross-env": "^5.2.0",
@@ -20,6 +21,7 @@
     "indonesia-cities-regencies": "^2.0.0",
     "jquery": "^3.3.1",
     "jquery-bracket": "^0.11.1",
+    "moment-timezone": "^0.5.25",
     "nuxt": "^2.4.0",
     "select2": "^4.0.6-rc.1",
     "vue-select": "^2.6.4"

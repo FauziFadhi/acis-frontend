@@ -1,7 +1,7 @@
 <template>
 <div>
 
-  <Alert v-if="alert" :type="type" :mes="mes" :title="Title"/>
+  <!-- <Alert v-if="alert" :type="type" :mes="mes" :title="Title"/> -->
   <div class="row">
     <div class="col-md-4">
       <div class="card card-danger">
@@ -11,9 +11,7 @@
         <div class="card-body">
           <div class="col-md-12">
             <b-form-group>
-              <b-form-radio-group v-model="selected.area" text-field="name" :options="area">
-                <span class="ml-3 text-bold">Area :</span>
-                {{ selected.area }}
+              <b-form-radio-group v-model="selected.area_id" text-field="name" value-field="id" :options="area">
               </b-form-radio-group>
             </b-form-group>
           </div>
@@ -38,15 +36,15 @@
               <table class="table table-condensed mb-0">
                 <thead class="d-block">
                   <tr>
-                    <th style="width: 40px">#</th>
-                    <th style="width:100%;">Category</th>
+                    <th style="width:90%;">Category</th>
+                    <th style="width: 40px">Quota</th>
                     <th style="width: 40px"></th>
                   </tr>
                 </thead>
                 <tbody class="overflow-auto d-block" style="max-height:400px;">
-                  <tr v-for="category,index in orderCategory">
-                    <td style="width: 40px">{{ index + 1 }}</td>
+                  <tr v-for="category,index in orderCategory" v-bind:key="category.id">
                     <td style="width:100%;">{{category.name}}</td>
+                    <td style="width: 40px"><input type="text" size="1" v-model="selected.competitionDetails[index].quota"></td>
                     <td style="width: 40px">
                       <button v-on:click="removeCategories(index)" class="btn btn-sm btn-danger">x</button>
                     </td>
@@ -116,6 +114,7 @@
         </div>
       </div>
       {{selected}}
+      {{errors}}
     </div>
   </div>
 </div>
@@ -124,18 +123,14 @@
 
 <script>
 import daterangepicker from "daterangepicker";
-import Alert from "../components/Alert";
 import axios from "axios";
-//TODO: Onchange province
+import moment from "moment-timezone";
 export default {
   data() {
     return {
       indonesia: require("~/static/city_province.json"),
       selected: {},
-      Title: "GG",
-      alert: false,
-      mes: "Test Message",
-      type: "alert-danger",
+      errors: null,
       province: null,
       area: [{ id: "1", name: "Indoor" }, { id: "2", name: "Outdoor" }],
       categories: []
@@ -146,20 +141,34 @@ export default {
       this.selected.competitionDetails.splice(index, 1);
     },
     sendData: function() {
+      // created by harusnya di backend sementara gini biar cepet TODO:
+      this.created_by = 1
+
+      let date = moment($('#reservation').data('daterangepicker').startDate._d);
+      this.selected.start_date = date.tz('Asia/Jakarta').format("YYYY/MM/DD");
+
+      date = moment($('#reservation').data('daterangepicker').endDate._d);
+      this.selected.end_date = date.tz('Asia/Jakarta').format("YYYY/MM/DD");
       this.selected.competitionDetails = _.map(this.selected.competitionDetails, function(a){
-        return {'category_id': a.id,
-        quota:0
+        let id = a.id
+        if(a.category_id)
+          id = a.category_id
+        return {'category_id': id,
+        'name': a.name,
+        quota: a.quota
         }
       })
-    console.log(this.selected.competitionDetails)
       axios
         .post("http://localhost:8000/api/competitions", this.selected)
-        .then(() => {
-          alert("success");
+        .then((resp) => {
+          console.log(resp.data.data.id);
+          this.$toast.success("success to create competitions");
+          this.$router.push({path: '/dashboard/competition/'+resp.data.data.id})
+          console.log(this.$router)
         })
         .catch(e => {
-          this.alert = true
-          // console.log(e.response.data.errors.area_id[0])
+          this.errors = e.response.data.errors;
+          this.$toast.error(e.response.data.message)
         });
     },
     setCity(value) {
@@ -170,28 +179,22 @@ export default {
     orderCategory: function() {
       return _.orderBy(this.selected.competitionDetails, "name");
     },
-
-    getDate: function() {
-      this.selected.date = $("#reservation").val();
-    },
     provinces() {
       return _.groupBy(this.indonesia, "province");
     },
-
     cities() {
       return _.filter(this.indonesia, ["province", this.province]);
     }
   },
   mounted() {
     $(function() {
-      $("#reservation").daterangepicker();
+      $("#reservation").daterangepicker({
+
+      });
     });
     axios.get("http://localhost:8000/api/categories").then((resp) => {
       this.categories = resp.data.data
     });
-  },
-  components:{
-    Alert
   }
 };
 </script>
