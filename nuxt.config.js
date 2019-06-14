@@ -58,13 +58,32 @@ export default {
     // Doc: https://bootstrap-vue.js.org/docs/
     'bootstrap-vue/nuxt',
     '@nuxtjs/axios',
+    '@nuxtjs/auth',
     '@nuxtjs/toast'
   ],
 
   axios: {
-
+    baseURL: 'http://localhost:8000/api'
   },
 
+  auth: {
+    strategies:{
+      local: {
+        endpoint: {
+          login:{
+            url: 'login', method: 'post', propertyName: 'access_token'
+          },
+          user: {
+            url: 'home', method: 'get', propertyName: 'data'
+          },
+          logout: {
+            url: 'logout', method: 'get'
+          }
+        }
+      }
+    }
+  },
+  
   toast: {
     position: 'top-center',
     duration: 3000,

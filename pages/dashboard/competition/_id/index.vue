@@ -1,6 +1,6 @@
 <template>
     <div>
-        Tournament {{this.$route.params.id}}
+        Tournament {{this.$route}}
     </div>
 </template>
 

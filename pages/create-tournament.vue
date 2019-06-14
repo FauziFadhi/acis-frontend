@@ -42,7 +42,7 @@
                   </tr>
                 </thead>
                 <tbody class="overflow-auto d-block" style="max-height:400px;">
-                  <tr v-for="category,index in orderCategory" v-bind:key="category.id">
+                  <tr v-for="category,index in orderCategory">
                     <td style="width:100%;">{{category.name}}</td>
                     <td style="width: 40px"><input type="text" size="1" v-model="selected.competitionDetails[index].quota"></td>
                     <td style="width: 40px">

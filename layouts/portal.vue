@@ -51,9 +51,28 @@
         >
           <ul class="navbar-nav">
             <li class="nav-item">
-              <a class="nav-link" href="/Create Tournament">
+              <a class="nav-link" href="/login">
                 <i class="now-ui-icons business_badge"></i>
                 <p>Login</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/signup">
+                <i class="now-ui-icons business_badge"></i>
+                <p>Sign Up</p>
+              </a>
+            </li>
+            <!-- <li class="nav-item">
+              <a
+                class="nav-link"
+                rel="tooltip"
+                title="Follow us on Twitter"
+                data-placement="bottom"
+                href="https://twitter.com/CreativeTim"
+                target="_blank"
+              >
+                <i class="fa fa-twitter"></i>
+                <p class="d-lg-none d-xl-none">Twitter</p>
               </a>
             </li>
             <li class="nav-item">
@@ -68,8 +87,8 @@
                 <i class="fa fa-twitter"></i>
                 <p class="d-lg-none d-xl-none">Twitter</p>
               </a>
-            </li>
-            <li class="nav-item">
+            </li> -->
+            <!-- <li class="nav-item">
               <a
                 class="nav-link"
                 rel="tooltip"
@@ -94,7 +113,7 @@
                 <i class="fa fa-instagram"></i>
                 <p class="d-lg-none d-xl-none">Instagram</p>
               </a>
-            </li>
+            </li> -->
           </ul>
         </div>
       </div>
