@@ -47,6 +47,7 @@ export default {
   ** Plugins to load before mounting the App
   */
   plugins: [
+    '~plugins/mixins/user.js',
     { src: '~/plugins/jquery.bracket.min.js', ssr: false },
     { src: '~/plugins/vue-select', ssr: false }
   ],
@@ -69,12 +70,12 @@ export default {
   auth: {
     strategies:{
       local: {
-        endpoint: {
+        endpoints: {
           login:{
             url: 'login', method: 'post', propertyName: 'access_token'
           },
           user: {
-            url: 'home', method: 'get', propertyName: 'data'
+            url: 'me', method: 'get', propertyName: 'data'
           },
           logout: {
             url: 'logout', method: 'get'

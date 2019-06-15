@@ -1,17 +1,24 @@
 <template>
-    <div>
-        Tournament {{this.$route}}
-    </div>
+  <div>
+    <template v-if="this.$auth.user">
+      <div>
+        Tournament
+        <p>{{authenticated}}</p>
+      </div>
+    </template>
+    <template v-else>
+    <div>GG</div>
+        </template>
+  </div>
 </template>
+
+
 
 <script>
 export default {
-    mounted(){
-        console.log(this.$router)
-    }
-}
+  mounted() {}
+};
 </script>
 
 <style>
-
 </style>

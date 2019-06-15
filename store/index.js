@@ -1,5 +1,7 @@
 import Vuex from 'vuex'
-import axios from 'axios'
+import Vue from 'vue'
+
+Vue.use(Vuex)
 
 const createStore = () => {
   return new Vuex.Store({

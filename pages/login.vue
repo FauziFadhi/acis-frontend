@@ -110,7 +110,7 @@
         <div class="container">
           <div class="col-md-4 content-center">
             <div class="card card-login card-plain">
-              <form class="form" method action>
+              <form @submit.prevent="login">
                 <div class="header header-primary text-center">
                   <div class="logo-container">
                     <!-- TODO: Logo -->
@@ -118,25 +118,31 @@
                   </div>
                 </div>
                 <div class="content">
+                  <!-- <span class="text-danger" v-if="errors.email">
+                    {{errors.email[0]}}
+                  </span> -->
                   <div class="input-group form-group-no-border input-lg">
                     <span class="input-group-addon">
                       <i class="now-ui-icons users_circle-08"></i>
                     </span>
-                    <input type="text" class="form-control" placeholder="First Name...">
+                    <input type="text" class="form-control" v-model="form.email" placeholder="Email">
                   </div>
+                  <!-- <span class="text-danger" v-if="errors.password">
+                    {{errors.password[0]}}
+                  </!-->
                   <div class="input-group form-group-no-border input-lg">
                     <span class="input-group-addon">
                       <i class="now-ui-icons text_caps-small"></i>
                     </span>
-                    <input type="text" placeholder="Last Name..." class="form-control">
+                    <input type="password" v-model="form.password" placeholder="Password" class="form-control">
                   </div>
                 </div>
                 <div class="footer text-center">
-                  <a href="#pablo" class="btn btn-primary btn-round btn-lg btn-block">Get Started</a>
+                  <button type="submit" class="btn btn-primary btn-round btn-lg btn-block">Login</button>
                 </div>
                 <div class="pull-left">
                   <h6>
-                    <a href="#pablo" class="link">Create Account</a>
+                    <nuxt-link to="/signup" class="link">Create Account</nuxt-link>
                   </h6>
                 </div>
                 <div class="pull-right">
@@ -186,6 +192,19 @@
 <script>
 export default {
   layout: "custom",
+  data() {
+    return {
+      form: {
+        email: "",
+        password: ""
+      }
+    };
+  },
+  methods: {
+    async login() {
+      await this.$auth.login({data:this.form});
+    }
+  },
   head: {
     link: [
       { rel: "stylesheet", href: "https://fonts.googleapis.com/css?family=Montserrat:400,700,200" },

@@ -118,6 +118,9 @@
                   </div>
                 </div>
                 <div class="content">
+                  <span class="text-danger" v-if="errors.name">
+                    {{errors.name[0]}}
+                  </span>
                   <div class="input-group form-group-no-border input-lg">
                     <span class="input-group-addon">
                       <i class="now-ui-icons users_circle-08"></i>
@@ -135,6 +138,12 @@
                       class="form-control"
                     >
                   </div>
+                  <span class="text-danger" v-if="errors.email">
+                    {{errors.email[0]}}
+                  </span>
+                  <span class="text-danger" v-if="errors.password">
+                    {{errors.password[0]}}
+                  </span>
                   <div class="input-group form-group-no-border input-lg">
                     <span class="input-group-addon">
                       <i class="now-ui-icons text_caps-small"></i>
@@ -146,6 +155,9 @@
                       class="form-control"
                     >
                   </div>
+                  <span class="text-danger" v-if="errors.gender">
+                    {{errors.gender[0]}}
+                  </span> <br>
                   <div class="form-check form-check-radio form-check-inline">
                     <label class="form-check-label">
                       <input
@@ -178,6 +190,9 @@
                       <option value disabled selected>Province</option>
                     </select>
                   </div>
+                  <span class="text-danger" v-if="errors.city_id">
+                    {{errors.city_id[0]}}
+                  </span>
                   <div class="input-group form-group-no-border input-lg">
                     <span class="input-group-addon">
                       <i class="now-ui-icons text_caps-small"></i>
@@ -195,7 +210,7 @@
                 </div>
                 <div class="pull-left">
                   <h6>
-                    <a href="#pablo" class="link">Login</a>
+                    <nuxt-link to="/login" class="link">Login</nuxt-link>
                   </h6>
                 </div>
                 <div class="pull-right">
@@ -248,6 +263,7 @@ export default {
   layout: "custom",
   data() {
     return {
+      errors:{},
       form: {
         name: "",
         email: "",
@@ -264,9 +280,9 @@ export default {
         .then(() => {
           this.$toast.success("Your Registration Success");
           this.$auth.login({ data: this.form });
-          this.$router.push("/");
         })
         .catch(e => {
+          this.errors = e.response.data.errors;
           this.$toast.error("Something wrong about your data");
         });
     }

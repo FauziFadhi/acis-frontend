@@ -14,6 +14,7 @@
             title="Designed by Invision. Coded by Creative Tim"
             data-placement="bottom"
           >ACIS</a>
+          <template v-if="this.$auth.user">
           <nuxt-link
             class="navbar-brand"
             rel="tooltip"
@@ -30,6 +31,7 @@
             data-placement="bottom"
           ><i class="now-ui-icons business_badge"></i>
                 <p>Create Tournament</p></nuxt-link>
+          </template>
           <button
             class="navbar-toggler navbar-toggler"
             type="button"
@@ -49,6 +51,7 @@
           id="navigation"
           data-nav-image="./archery.jpg"
         >
+          <template v-if="!this.$auth.user">
           <ul class="navbar-nav">
             <li class="nav-item">
               <a class="nav-link" href="/login">
@@ -62,59 +65,18 @@
                 <p>Sign Up</p>
               </a>
             </li>
-            <!-- <li class="nav-item">
-              <a
-                class="nav-link"
-                rel="tooltip"
-                title="Follow us on Twitter"
-                data-placement="bottom"
-                href="https://twitter.com/CreativeTim"
-                target="_blank"
-              >
-                <i class="fa fa-twitter"></i>
-                <p class="d-lg-none d-xl-none">Twitter</p>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a
-                class="nav-link"
-                rel="tooltip"
-                title="Follow us on Twitter"
-                data-placement="bottom"
-                href="https://twitter.com/CreativeTim"
-                target="_blank"
-              >
-                <i class="fa fa-twitter"></i>
-                <p class="d-lg-none d-xl-none">Twitter</p>
-              </a>
-            </li> -->
-            <!-- <li class="nav-item">
-              <a
-                class="nav-link"
-                rel="tooltip"
-                title="Like us on Facebook"
-                data-placement="bottom"
-                href="https://www.facebook.com/CreativeTim"
-                target="_blank"
-              >
-                <i class="fa fa-facebook-square"></i>
-                <p class="d-lg-none d-xl-none">Facebook</p>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a
-                class="nav-link"
-                rel="tooltip"
-                title="Follow us on Instagram"
-                data-placement="bottom"
-                href="https://www.instagram.com/CreativeTimOfficial"
-                target="_blank"
-              >
-                <i class="fa fa-instagram"></i>
-                <p class="d-lg-none d-xl-none">Instagram</p>
-              </a>
-            </li> -->
           </ul>
+          </template>
+          <template v-else>
+            <ul class="navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link" @click.prevent="logout">
+                <i class="now-ui-icons business_badge"></i>
+                <p>Logout</p>
+              </a>
+            </li>
+          </ul>
+          </template>
         </div>
       </div>
     </nav>
@@ -182,6 +144,11 @@
 
 <script>
 export default {
+  methods:{
+    async logout(){
+      await this.$auth.logout();
+    }
+  },
   head: {
     link: [
       { rel: "stylesheet", href: "https://fonts.googleapis.com/css?family=Montserrat:400,700,200" },
