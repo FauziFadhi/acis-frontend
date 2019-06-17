@@ -14,7 +14,7 @@
             title="Designed by Invision. Coded by Creative Tim"
             data-placement="bottom"
           >ACIS</a>
-          <template v-if="this.$auth.user">
+          <template v-if="loggedIn">
           <nuxt-link
             class="navbar-brand"
             rel="tooltip"
@@ -51,7 +51,7 @@
           id="navigation"
           data-nav-image="./archery.jpg"
         >
-          <template v-if="!this.$auth.user">
+          <template v-if="!loggedIn">
           <ul class="navbar-nav">
             <li class="nav-item">
               <a class="nav-link" href="/login">
@@ -160,15 +160,15 @@ export default {
   mounted() {
     // nowuiKit.initNavbarImage();
 
-    $navbar = $(".navbar[color-on-scroll]");
-    scroll_distance = $navbar.attr("color-on-scroll") || 500;
+    // $navbar = $(".navbar[color-on-scroll]");
+    // scroll_distance = $navbar.attr("color-on-scroll") || 500;
 
-    // Check if we have the class "navbar-color-on-scroll" then add the function to remove the class "navbar-transparent" so it will transform to a plain color.
+    // // Check if we have the class "navbar-color-on-scroll" then add the function to remove the class "navbar-transparent" so it will transform to a plain color.
 
-    if ($(".navbar[color-on-scroll]").length != 0) {
-      nowuiKit.checkScrollForTransparentNavbar();
-      $(window).on("scroll", nowuiKit.checkScrollForTransparentNavbar);
-    }
+    // if ($(".navbar[color-on-scroll]").length != 0) {
+    //   nowuiKit.checkScrollForTransparentNavbar();
+    //   $(window).on("scroll", nowuiKit.checkScrollForTransparentNavbar);
+    // }
   }
 };
 

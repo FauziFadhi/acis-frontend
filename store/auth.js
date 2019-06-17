@@ -4,10 +4,20 @@ export const getters = {
     },
     user (state) {
         return state.user
+    },
+    token (state) {
+        return state.token
     }
 }
 
-export const state = {
+export const state = () =>({
     user: null,
+    token: null,
     loggedIn: false
-}
+})
+
+export const mutations = {
+    setToken(state, token) {
+      state.token = token
+    }
+  }

@@ -47,9 +47,11 @@ export default {
   ** Plugins to load before mounting the App
   */
   plugins: [
-    '~plugins/mixins/user.js',
+    '~/plugins/mixins/user.js',
+    '~/plugins/axios.js',
     { src: '~/plugins/jquery.bracket.min.js', ssr: false },
-    { src: '~/plugins/vue-select', ssr: false }
+    { src: '~/plugins/vue-select', ssr: false },
+    { src: '~/plugins/ckeditor.js', ssr: false }
   ],
 
   /*

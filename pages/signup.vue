@@ -269,7 +269,7 @@ export default {
         email: "",
         password: "",
         gender: null,
-        city_id: null
+        city_id: 1
       }
     };
   },

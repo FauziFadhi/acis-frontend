@@ -202,7 +202,11 @@ export default {
   },
   methods: {
     async login() {
-      await this.$auth.login({data:this.form});
+      await this.$auth.login({data:this.form}).then(() => {
+        this.$toast.success('Welcome to Archery Competition')
+      }).catch((e) => {
+        this.$toast.error('Your email and password combination didnt match')
+      });
     }
   },
   head: {

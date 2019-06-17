@@ -19,10 +19,10 @@
           <img src="dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
         </div>
         <div class="info">
-          <a href="#" class="d-block">Alexander Pierce</a>
+          <a href="#" class="d-block">{{user.name}}</a>
         </div>
       </div>
-
+      <template v-if="this.$route.name.includes('dashboard-competition-')">
       <!-- Sidebar Menu -->
       <nav class="mt-2">
         <ul
@@ -68,6 +68,7 @@
         </ul>
       </nav>
       <!-- /.sidebar-menu -->
+      </template>
     </div>
     <!-- /.sidebar -->
   </aside>

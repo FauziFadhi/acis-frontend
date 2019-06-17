@@ -1,9 +1,9 @@
 <template>
   <div>
-    <template v-if="this.$auth.user">
+    <template v-if="loggedIn">
       <div>
         Tournament
-        <p>{{authenticated}}</p>
+        <p></p>
       </div>
     </template>
     <template v-else>
@@ -16,7 +16,9 @@
 
 <script>
 export default {
-  mounted() {}
+  mounted() {
+    console.log(this.$route)
+  }
 };
 </script>
 

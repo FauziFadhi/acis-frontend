@@ -14,6 +14,7 @@
               <b-form-radio-group v-model="selected.area_id" text-field="name" value-field="id" :options="area">
               </b-form-radio-group>
             </b-form-group>
+              <span v-if="errors.area_id" class="text-danger">Area is required</span>
           </div>
           <hr>
           <b-form-group>
@@ -30,6 +31,7 @@
               label="name"
             ></v-select>
           </b-form-group>
+              <span v-if="errors.competitionDetails" class="text-danger">{{errors.competitionDetails[0]}}</span>
           <br>
           <b-form-group class="mb-0">
             <div>
@@ -48,6 +50,7 @@
                     <td style="width: 40px">
                       <button v-on:click="removeCategories(index)" class="btn btn-sm btn-danger">x</button>
                     </td>
+                  <span v-if="errors.competitionDetails" class="text-danger">{{errors.competitionDetails[index].quota}}</span>
                   </tr>
                 </tbody>
               </table>
@@ -68,12 +71,21 @@
             <label class="col-sm-2 control label">Name</label>
             <div class="col-sm-10">
               <input type="text" v-model="selected.name" class="form-control">
+              <span v-if="errors.name" class="text-danger">{{errors.name[0]}}</span>
             </div>
           </div>
           <div class="form-group">
             <label class="col-sm-2 control label">Address</label>
             <div class="col-sm-10">
               <textarea name id cols="30" v-model="selected.address" rows="3" class="form-control"></textarea>
+              <span v-if="errors.address" class="text-danger">{{errors.address[0]}}</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control label">Description</label>
+            <div class="col-sm-10">
+              <textarea name id cols="30" v-model="selected.description" rows="3" class="form-control"></textarea>
+              <span v-if="errors.description" class="text-danger">{{errors.description[0]}}</span>
             </div>
           </div>
           <div class="form-group">
@@ -104,6 +116,7 @@
             <label class="col-sm-2 control label">City / Region</label>
             <div class="col-sm-10">
               <v-select placeholder="Type Here" label="name" :options="cities" @input="setCity"/>
+              <span v-if="errors.city_id" class="text-danger">City is Required</span>
             </div>
             <hr>
             <b-form-group>
@@ -130,7 +143,7 @@ export default {
     return {
       indonesia: require("~/static/city_province.json"),
       selected: {},
-      errors: null,
+      errors: {},
       province: null,
       area: [{ id: "1", name: "Indoor" }, { id: "2", name: "Outdoor" }],
       categories: []
@@ -141,9 +154,6 @@ export default {
       this.selected.competitionDetails.splice(index, 1);
     },
     sendData: function() {
-      // created by harusnya di backend sementara gini biar cepet TODO:
-      this.created_by = 1
-
       let date = moment($('#reservation').data('daterangepicker').startDate._d);
       this.selected.start_date = date.tz('Asia/Jakarta').format("YYYY/MM/DD");
 
@@ -159,16 +169,17 @@ export default {
         }
       })
       axios
-        .post("http://localhost:8000/api/competitions", this.selected)
+        .post("http://localhost:8000/api/competitions", this.selected, {headers: {Authorization: this.$auth.$storage._state["_token.local"]}})
         .then((resp) => {
           console.log(resp.data.data.id);
           this.$toast.success("success to create competitions");
           this.$router.push({path: '/dashboard/competition/'+resp.data.data.id})
           console.log(this.$router)
         })
-        .catch(e => {
+        .catch((e) => {
           this.errors = e.response.data.errors;
           this.$toast.error(e.response.data.message)
+          this.selected.competitionDetails= []
         });
     },
     setCity(value) {
