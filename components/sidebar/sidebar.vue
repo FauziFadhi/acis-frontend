@@ -23,51 +23,47 @@
         </div>
       </div>
       <template v-if="this.$route.name.includes('dashboard-competition-')">
-      <!-- Sidebar Menu -->
-      <nav class="mt-2">
-        <ul
-          class="nav nav-pills nav-sidebar flex-column"
-          data-widget="treeview"
-          role="menu"
-          data-accordion="false"
-        >
-          <!-- Add icons to the links using the .nav-icon class
-          with font-awesome or any other icon font library-->
-          <li class="nav-item has-treeview menu-open">
-            <nuxt-link to="/dashboard/competition/" class="nav-link">
-              <i class="nav-icon fa fa-dashboard"></i>
-              <p>
-                Competition
-                <i class="right fa fa-angle-left"></i>
-              </p>
-            </nuxt-link>
-            <ul class="nav nav-treeview">
-              <li class="nav-item">
-                <nuxt-link class="nav-link" to="/dashboard/competition/new">
-                  <i class="fa fa-circle-o nav-icon"></i>
-                  <p>Create</p>
-                </nuxt-link>
-              </li>
-              <li class="nav-item">
-                <nuxt-link to="/dashboard/competition/elimination/bracket" class="nav-link">
-                  <i class="fa fa-circle-o nav-icon"></i>
-                  <p>Bracket</p>
-                </nuxt-link>
-              </li>
-            </ul>
-          </li>
-          <li class="nav-item">
-            <nuxt-link to="/dashboard/participants" class="nav-link">
-              <i class="nav-icon fa fa-th"></i>
-              <p>
-                Participants
-                <span class="right badge badge-danger">New</span>
-              </p>
-            </nuxt-link>
-          </li>
-        </ul>
-      </nav>
-      <!-- /.sidebar-menu -->
+        <!-- Sidebar Menu -->
+        <nav class="mt-2">
+          <ul
+            class="nav nav-pills nav-sidebar flex-column"
+            data-widget="treeview"
+            role="menu"
+            data-accordion="false"
+          >
+            <!-- Add icons to the links using the .nav-icon class
+            with font-awesome or any other icon font library-->
+            <li class="nav-item">
+              <nuxt-link :to="'/dashboard/competition/'+$route.params.id" class="nav-link">
+                <i class="nav-icon fa fa-dashboard"></i>
+                <p>
+                  Competition
+                </p>
+              </nuxt-link>
+            </li>
+            <li class="nav-item">
+              <nuxt-link :to="'/dashboard/competition/'+$route.params.id+'/participants'" class="nav-link">
+                <i class="nav-icon fa fa-th"></i>
+                <p>
+                  Participants
+                </p>
+              </nuxt-link>
+            </li>
+            <li class="nav-item">
+              <nuxt-link class="nav-link" :to="'/dashboard/competition/'+$route.params.id+'/qualification'">
+                <i class="fa fa-circle-o nav-icon"></i>
+                <p>Qualification</p>
+              </nuxt-link>
+            </li>
+            <li class="nav-item">
+              <nuxt-link :to="'/dashboard/competition/'+$route.params.id+'/elimination'" class="nav-link">
+                <i class="fa fa-circle-o nav-icon"></i>
+                <p>Elimination</p>
+              </nuxt-link>
+            </li>
+          </ul>
+        </nav>
+        <!-- /.sidebar-menu -->
       </template>
     </div>
     <!-- /.sidebar -->
@@ -76,7 +72,7 @@
 
 <script>
 export default {
-  name: 'sidebar'
+  name: "sidebar"
 };
 </script>
 

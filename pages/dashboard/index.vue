@@ -1,38 +1,68 @@
 <template>
-  <section class="container">
-    <div id="minimal">
-      <div class="demo"></div>
-    </div>
-  </section>
+  <div>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>No</th>
+          <th>Nama</th>
+          <th>Province / City</th>
+          <th>Start Date - End Date</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(comp,i) in competitions" :key="comp.id">
+          <td>{{i+1}}</td>
+          <td>{{comp.name}}</td>
+          <td>{{comp.city.province}} / {{comp.city.city}}</td>
+          <td>{{comp.start_date}} - {{comp.end_date}}</td>
+          <td>{{comp.status}}</td>
+          <td>
+            <nuxt-link class="btn-sm btn-success" :to="{path:'/dashboard/competition/'+comp.id}">Detail</nuxt-link>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </template>
 
 <script>
-import Logo from "~/components/Logo.vue";
-  
 export default {
-  components: {
-    Logo
+  components: {},
+  data() {
+    return {
+      competitions: []
+    };
   },
-  mounted(){
-var minimalData = {
-    teams: [
-      ["Team 1", "Team 2"] /* first matchup */,
-      ["Team 3", "Team 4"] /* second matchup */
-    ],
-    results: [
-      [[1, 2], [3, 4]] /* first round */,
-      [[4, 6], [2, 1]] /* second round */
-    ]
-  };
-  
-  $(function() {
-    $("#minimal .demo").bracket({
-      init: minimalData /* data to initialize the bracket with */
+  async created() {
+    this.$axios
+      .get("/competitions/", {
+        params: { createdBy: this.user.id, load: "city" }
+      })
+      .then(resp => {
+        this.competitions = resp.data.data;
+      });
+  },
+  mounted() {
+    var minimalData = {
+      teams: [
+        ["Team 1", "Team 2"] /* first matchup */,
+        ["Team 3", "Team 4"] /* second matchup */
+      ],
+      results: [
+        [[1, 2], [3, 4]] /* first round */,
+        [[4, 6], [2, 1]] /* second round */
+      ]
+    };
+
+    $(function() {
+      $("#minimal .demo").bracket({
+        init: minimalData /* data to initialize the bracket with */
+      });
     });
-  });
   }
 };
-
 </script>
 
 <style>

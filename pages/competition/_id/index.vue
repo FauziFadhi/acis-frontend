@@ -250,7 +250,20 @@
 
 <script>
 export default {
-  layout: "portal"
+  layout: "portal",
+  data(){
+    return {
+      competition: {}
+    }
+  },
+  async beforeCreate(){
+    console.log()
+    this.$axios.get('/competitions/'+this.$route.params.id).then((resp) => {
+      this.competition = resp.data.data
+    }).catch((e) => {
+      this.$router.push('/404')
+    })
+  }
 };
 </script>
 

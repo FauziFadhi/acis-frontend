@@ -63,7 +63,7 @@
                           <div class="card-title font-weight-bold mb-1">{{comp.name}}</div>
                           <div class="card-subtitle text-secondary">{{comp.createdBy.name}}</div>
                           <p class="text-justify">{{comp.description}}</p>
-                          <div class="d-flex">
+                          <div class="d-flex mt-5">
                             <div>
                               <nuxt-link
                                 class="btn-sm btn-secondary"
@@ -138,7 +138,7 @@
                               <div class="card-title font-weight-bold mb-1">{{comp.name}}</div>
                               <div class="card-subtitle text-secondary">{{comp.createdBy.name}}</div>
                               <p class="text-justify">{{comp.description}}</p>
-                              <div class="d-flex">
+                              <div class="d-flex mt-5">
                                 <div>
                                   <nuxt-link
                                     class="btn-sm btn-secondary"
@@ -170,7 +170,7 @@
                                 <div class="card-title font-weight-bold mb-1">{{comp.name}}</div>
                                 <div class="card-subtitle text-secondary">{{comp.createdBy.name}}</div>
                                 <p class="text-justify">{{comp.description}}</p>
-                                <div class="d-flex">
+                                <div class="d-flex mt-5">
                                   <div>
                                     <nuxt-link
                                       class="btn-sm btn-secondary"

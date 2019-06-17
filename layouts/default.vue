@@ -78,12 +78,15 @@ export default {
       { rel: "stylesheet", href: "/css/adminlte.min.css" }
     ]
   },
-  
   components: {
     navbar,
     sidebar,
     Footer,
     rightSideBar
+  },
+  mounted(){
+    if(!this.loggedIn)
+      this.$router.push({name: 'index'})
   }
 };
 </script>
