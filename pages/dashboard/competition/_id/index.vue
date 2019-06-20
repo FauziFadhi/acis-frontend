@@ -1,7 +1,7 @@
 <template>
   <div class="col-md-12">
     <div class="row">
-      <Chart class="col-md" :data="data" :options="options"/>
+      <Chart class="col-md" height="80px" :data="data" :options="options"/>
     </div>
   </div>
 </template>
@@ -25,13 +25,13 @@ export default {
         ],
         datasets: [
           {
-            label: "Data One",
-            backgroundColor: "#f87979",
+            label: "Registered",
+            backgroundColor: "green",
             data: [40, 39, 10, 40, 39, 80, 40]
           },
           {
-            label: "Data Two",
-            backgroundColor: "#fFF000",
+            label: "Slot Available",
+            backgroundColor: "red",
             data: [20, 39, 10, 40, 39, 80, 40]
           }
         ]

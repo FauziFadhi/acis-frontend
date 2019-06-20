@@ -7,15 +7,19 @@
             <div class="row px-4">
               <div class="mr-auto">
                 <p class="category">
-                  Tournament Name
-                  <a class="btn-sm btn-success btn-outline-dark text-white">Register</a>
+                  {{competition.name}}
+                  <template v-if="loggedIn">
+                    <button data-target="#register" data-toggle="modal" class="btn-sm btn-success text-white">Register</button>
+                  </template>
                 </p>
               </div>
-              <div class="row">
-                <span class="font-weight-bold">Payment Status:</span>
-                <span>&nbsp; &nbsp;Status {{}}</span>
-                <a to="#">icon</a>
-              </div>
+              <template v-if="loggedIn">
+                <div class="row">
+                  <span class="font-weight-bold">Payment Status:</span>
+                  <span>&nbsp; &nbsp;Status {{}}</span>
+                  <a to="#">icon</a>
+                </div>
+              </template>
             </div>
           </div>
         </div>
@@ -73,7 +77,9 @@
           <div class="col-md-10 col-lg-10 col-xl-10 ml-auto mr-auto">
             <p class="category">Quota Participant</p>
             <!-- Nav tabs -->
-            <div class="card">Chart</div>
+            <div class="card">
+              <Chart height=100 :data="data" :options="options"/>
+            </div>
           </div>
         </div>
       </div>
@@ -90,13 +96,17 @@
                 role="tablist"
                 data-background-color="orange"
               >
-                <li class="nav-item">
+                <li
+                  class="nav-item"
+                  v-for="detail in competition.competitionDetails"
+                  :key="detail.id"
+                >
                   <a
                     class="nav-link active text-black-50"
                     data-toggle="tab"
                     href="#home1"
                     role="tab"
-                  >Compettiion Detail Name {}</a>
+                  >{{detail.category.name}}</a>
                 </li>
               </ul>
               <div class="card-body">
@@ -140,13 +150,17 @@
                 role="tablist"
                 data-background-color="orange"
               >
-                <li class="nav-item">
+                <li
+                  class="nav-item"
+                  v-for="detail in competition.competitionDetails"
+                  :key="detail.id"
+                >
                   <a
                     class="nav-link active text-black-50"
                     data-toggle="tab"
                     href="#home1"
                     role="tab"
-                  >Compettiion Detail Name {}</a>
+                  >{{detail.category.name}}</a>
                 </li>
               </ul>
               <div class="card-body">
@@ -198,13 +212,17 @@
                 role="tablist"
                 data-background-color="orange"
               >
-                <li class="nav-item">
+                <li
+                  class="nav-item"
+                  v-for="detail in competition.competitionDetails"
+                  :key="detail.id"
+                >
                   <a
                     class="nav-link active text-black-50"
                     data-toggle="tab"
                     href="#home1"
                     role="tab"
-                  >Compettiion Detail Name {}</a>
+                  >{{detail.category.name}}</a>
                 </li>
               </ul>
               <div class="card-body">
@@ -234,11 +252,43 @@
             </button>
             <h4 class="title title-up">Payment Receipt</h4>
           </div>
-          <div class="modal-body">
-            
-          </div>
+          <div class="modal-body"></div>
           <div class="modal-footer">
             <button type="button" class="btn btn-default">Nice Button</button>
+            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--  End Modal -->
+    <!-- Sart Modal -->
+    <!-- DataTarget id modal -->
+    <div
+      class="modal fade"
+      id="register"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="myModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header justify-content-center">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+              <i class="now-ui-icons ui-1_simple-remove"></i>
+            </button>
+            <h4 class="title title-up">Register Tournament</h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <span>Category</span>
+              <select v-model="registerCompId" class="form-control">
+                <option v-for="details in competition.competitionDetails" :key="details.category.id" :value="details.id">{{details.category.name}}</option>
+              </select>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" @click="register" class="btn btn-success">Register</button>
             <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
           </div>
         </div>
@@ -249,20 +299,77 @@
 </template>
 
 <script>
+import Chart from "../../../components/Chart";
 export default {
   layout: "portal",
-  data(){
-    return {
-      competition: {}
+  components: {
+    Chart
+  },
+  methods :{
+    register() {
+      this.$axios.post('/participants',{'competition_detail_id':this.registerCompId,'user_id':this.user.id}).then((resp) => {
+        this.$toast.success("Success to Register Category");
+      }).catch((e) =>{
+        console.log(e)
+        this.$toast.error("failed to Register")
+      })
     }
   },
-  async beforeCreate(){
-    console.log()
-    this.$axios.get('/competitions/'+this.$route.params.id).then((resp) => {
-      this.competition = resp.data.data
-    }).catch((e) => {
-      this.$router.push('/404')
-    })
+  data() {
+    return {
+      competition: {},
+      registerCompId: null,
+      data: {
+        labels: [
+          "January",
+          "February",
+          "March",
+          "April",
+          "May",
+          "June",
+          "July"
+        ],
+        datasets: [
+          {
+            label: "Registered",
+            backgroundColor: "green",
+            data: [40, 39, 10, 40, 39, 80, 40]
+          },
+          {
+            label: "Slot Available",
+            backgroundColor: "red",
+            data: [20, 39, 10, 40, 39, 80, 40]
+          }
+        ]
+      },
+      options: {
+        scales: {
+          xAxes: [
+            {
+              stacked: true
+            }
+          ],
+          yAxes: [
+            {
+              stacked: true
+            }
+          ]
+        }
+      }
+    };
+  },
+  async beforeCreate() {
+    console.log();
+    this.$axios
+      .get("/competitions/" + this.$route.params.id, {
+        params: { load: "competitionDetails.category" }
+      })
+      .then(resp => {
+        this.competition = resp.data.data;
+      })
+      .catch(e => {
+        // this.$router.push('/404')
+      });
   }
 };
 </script>

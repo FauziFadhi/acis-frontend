@@ -56,7 +56,7 @@
                 <div class="card-body px-0" style="overflow-y:auto; max-height:400px;">
               <template v-if="byMonth || byMonth == []">
               <template v-for="comp in byMonth">
-                  <div class="card-body p-0">
+                  <div class="card-body border-bottom px-0">
                     <div class="col-md-12 p-0">
                       <div class="row px-4">
                         <div class="col-md">
@@ -215,9 +215,9 @@ export default {
   computed: {
     byMonth() {
       return _.filter(this.competitions, function(a) {
-        let d = new Date(a.start_date).getMonth() + 1;
-        if (d == new Date()) console.log(a);
-        return a;
+        let d = new Date(a.start_date);
+        if (d.getMonth() == new Date().getMonth() && d.getFullYear() == new Date().getFullYear())
+          return a;
       });
     }
   },
@@ -230,7 +230,6 @@ export default {
       .catch(e => {
         console.log(e.response);
       });
-
     if (this.user != null)
       this.$axios
         .get("/competitions?load=createdBy,city", {
@@ -238,7 +237,9 @@ export default {
         })
         .then(resp => {
           this.byProvince = resp.data.data;
-        });
+        }).catch(e => {
+        console.log(e.response);
+      });
   },
   layout: "portal"
 };
