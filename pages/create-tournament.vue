@@ -44,7 +44,7 @@
                   </tr>
                 </thead>
                 <tbody class="overflow-auto d-block" style="max-height:400px;">
-                  <tr v-for="category,index in orderCategory">
+                  <tr v-for="(category,index) in orderCategory" :key="index">
                     <td style="width:100%;">{{category.name}}</td>
                     <td style="width: 40px"><input type="text" size="1" v-model="selected.competitionDetails[index].quota"></td>
                     <td style="width: 40px">
@@ -121,13 +121,17 @@
             <hr>
             <b-form-group>
               <label class="mr-lg-3 ml-5">THB</label>
-              <b-button v-on:click="sendData">Upload</b-button>
+              <input type="file" @change="onFileChanged">
+            </b-form-group>
+            <hr>
+            <b-form-group>
+              <b-button class="btn-success" v-on:click="sendData">Create Tournament</b-button>
             </b-form-group>
           </div>
         </div>
       </div>
       {{selected}}
-      {{errors}}
+    {{errors}}
     </div>
   </div>
 </div>
@@ -150,6 +154,9 @@ export default {
     };
   },
   methods: {
+    onFileChanged (event) {
+    const file = event.target.files[0]
+    },
     removeCategories: function(index) {
       this.selected.competitionDetails.splice(index, 1);
     },

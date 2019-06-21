@@ -222,8 +222,11 @@ export default {
     }
   },
   created() {
+    let id = 0;
+    if(this.user)
+      id = this.user.id
     this.$axios
-      .get("/competitions?load=createdBy,city")
+      .get("/competitions?load=createdBy,city&notCreatedBy="+id)
       .then(resp => {
         this.competitions = resp.data.data;
       })
@@ -232,7 +235,7 @@ export default {
       });
     if (this.user != null)
       this.$axios
-        .get("/competitions?load=createdBy,city", {
+        .get("/competitions?load=createdBy,city&notCreatedBy="+id, {
           params: { province: this.user.city.province }
         })
         .then(resp => {

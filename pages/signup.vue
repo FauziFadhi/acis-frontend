@@ -186,8 +186,9 @@
                     <span class="input-group-addon">
                       <i class="now-ui-icons text_caps-small"></i>
                     </span>
-                    <select class="form-control">
+                    <select class="form-control" v-model="province">
                       <option value disabled selected>Province</option>
+                      <option :value="province" v-for="province in Object.keys(provinces)" :key="province">{{province}}</option>
                     </select>
                   </div>
                   <span class="text-danger" v-if="errors.city_id">
@@ -197,8 +198,9 @@
                     <span class="input-group-addon">
                       <i class="now-ui-icons text_caps-small"></i>
                     </span>
-                    <select v-model="form.city_id" class="form-control">
+                    <select v-model="form.city_id" class="form-control text-black">
                       <option value disabled selected>City</option>
+                      <option :value="city.id" v-for="city in cities" :key="city.id">{{city.name}}</option>
                     </select>
                   </div>
                 </div>
@@ -263,17 +265,30 @@ export default {
   layout: "custom",
   data() {
     return {
+      indonesia: require("~/static/city_province.json"),
+      province: null,
       errors:{},
       form: {
         name: "",
         email: "",
         password: "",
         gender: null,
-        city_id: 1
+        city_id: null
       }
     };
   },
+  computed: {
+    provinces() {
+      return _.groupBy(this.indonesia, "province");
+    },
+    cities() {
+      return _.filter(this.indonesia, ["province", this.province]);
+    }
+  },
   methods: {
+    setCity(value) {
+      this.form.city_id = value.id;
+    },
     register() {
       this.$axios
         .post("/register", this.form)

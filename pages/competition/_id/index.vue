@@ -9,16 +9,25 @@
                 <p class="category">
                   {{competition.name}}
                   <template v-if="loggedIn">
-                    <button data-target="#register" data-toggle="modal" class="btn-sm btn-success text-white">Register</button>
+                    <button
+                      data-target="#register"
+                      data-toggle="modal"
+                      class="btn-sm btn-success text-white"
+                    >Register</button>
                   </template>
                 </p>
               </div>
               <template v-if="loggedIn">
-                <div class="row">
-                  <span class="font-weight-bold">Payment Status:</span>
-                  <span>&nbsp; &nbsp;Status {{}}</span>
-                  <a to="#">icon</a>
-                </div>
+                <p>
+                  <!-- <span class="font-weight-bold">Payment Status:</span> -->
+                  <span class="font-weight-bold">Payment Upload:</span>
+                  <span>&nbsp; &nbsp;</span>
+                  <button
+                    data-target="#paymentReceipt"
+                    data-toggle="modal"
+                    class="btn-sm btn-info"
+                  >Upload</button>
+                </p>
               </template>
             </div>
           </div>
@@ -78,18 +87,17 @@
             <p class="category">Quota Participant</p>
             <!-- Nav tabs -->
             <div class="card">
-              <Chart height=100 :data="data" :options="options"/>
+              <Chart v-if="loaded" class="col-md" :height="80" :data="data" :options="options"/>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <div class="section" id="participantList">
+    <!-- <div class="section" id="participantList">
       <div class="container">
         <div class="row justify-content-center">
           <div class="col-md-10 col-lg-10 col-xl-10 ml-auto mr-auto">
             <p class="category">Participant List</p>
-            <!-- Nav tabs -->
             <div class="card">
               <ul
                 class="nav nav-tabs nav-tabs-neutral justify-content-center"
@@ -110,8 +118,6 @@
                 </li>
               </ul>
               <div class="card-body">
-                <!-- Tab panes -->
-                <!-- TODO: dont forget to change id title and body -->
                 <div class="tab-content text-center">
                   <div class="tab-pane active" id="home1" role="tabpanel">
                     <table class="table-striped table">
@@ -137,7 +143,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </div>-->
     <div class="section" id="qualificationList">
       <div class="container">
         <div class="row justify-content-center">
@@ -152,13 +158,14 @@
               >
                 <li
                   class="nav-item"
-                  v-for="detail in competition.competitionDetails"
+                  v-for="(detail,index) in competition.competitionDetails"
                   :key="detail.id"
                 >
                   <a
-                    class="nav-link active text-black-50"
+                    class="nav-link text-black-50"
+                    :class="index==0?'active show':''"
                     data-toggle="tab"
-                    href="#home1"
+                    :href="'#qualification_'+index"
                     role="tab"
                   >{{detail.category.name}}</a>
                 </li>
@@ -167,28 +174,38 @@
                 <!-- Tab panes -->
                 <!-- TODO: dont forget to change id title and body -->
                 <div class="tab-content text-center">
-                  <div class="tab-pane active" id="home1" role="tabpanel">
+                  <div
+                    class="tab-pane"
+                    :id="'qualification_'+index"
+                    v-for="(detail,index) in competition.competitionDetails"
+                    :key="detail.id"
+                    role="tabpanel"
+                    :class="index==0?'active show':''"
+                  >
                     <table class="table-striped table">
                       <thead>
                         <tr>
                           <th>Rank</th>
-                          <th>Target</th>
                           <th>Nama</th>
-                          <th>Team</th>
                           <th>Total</th>
                           <th>X+10</th>
                           <th>10</th>
                         </tr>
                       </thead>
                       <tbody>
-                        <tr>
-                          <td>1</td>
-                          <td>1A</td>
-                          <td>Fauzi Fadhillah</td>
-                          <td>BACS</td>
-                          <td>378</td>
-                          <td>23</td>
-                          <td>20</td>
+                        <tr
+                          v-for="(participant,i) in orderByTotal(detail)"
+                          @click="openQualificationModal(participant.id)"
+                          :key="participant.id"
+                          :data-id="participant.id"
+                          data-target="#qualificationScore"
+                          data-toggle="modal"
+                        >
+                          <td>{{i+1}}</td>
+                          <td>{{participant.user.name}}</td>
+                          <td>{{participant.totalScore}}</td>
+                          <td>{{participant.totalsx10}}</td>
+                          <td>{{participant.totals10}}</td>
                         </tr>
                       </tbody>
                     </table>
@@ -214,20 +231,25 @@
               >
                 <li
                   class="nav-item"
-                  v-for="detail in competition.competitionDetails"
+                  v-for="(detail,index) in competition.competitionDetails"
                   :key="detail.id"
                 >
                   <a
-                    class="nav-link active text-black-50"
+                    class="nav-link text-black-50"
+                    :class="index==0?'active show':''"
                     data-toggle="tab"
-                    href="#home1"
+                    :href="'#elimination_'+index"
                     role="tab"
                   >{{detail.category.name}}</a>
                 </li>
               </ul>
               <div class="card-body">
                 <!-- Tab panes -->
-                {Bracket content Center}
+                <div class="tab-content text-center">
+                  <!-- <div class="tab-pane" role="tabpanel" :id="'elimination_'+index" :class="index==0?'active show':''">
+                      {{index}}
+                  </div>-->
+                </div>
               </div>
             </div>
           </div>
@@ -235,110 +257,198 @@
       </div>
     </div>
     <!-- Sart Modal -->
-    <!-- DataTarget id modal -->
-    <div
-      class="modal fade"
-      id="paymentReceipt"
-      tabindex="-1"
-      role="dialog"
-      aria-labelledby="myModalLabel"
-      aria-hidden="true"
+    <modal
+      :idModal="'paymentReceipt'"
+      :title="'Payment Receipt Upload'"
+      :bClick="upload"
+      :bTitle="'Upload'"
     >
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header justify-content-center">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-              <i class="now-ui-icons ui-1_simple-remove"></i>
-            </button>
-            <h4 class="title title-up">Payment Receipt</h4>
-          </div>
-          <div class="modal-body"></div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default">Nice Button</button>
-            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-          </div>
-        </div>
+      <div class="form-group">
+        <span>Participant Name and Category</span>
+        <select v-model="modelParticipant" class="form-control">
+          <template v-if="paymentParticipant.length != 0">
+          <option
+            v-for="(participant,i) in paymentParticipantList"
+            :key="i"
+            :value="participant"
+            :selected="(i==0)?true:false"
+          >{{participant.user.name}} || {{participant.competitionDetail.category.name}}</option>
+          </template>
+          <template v-else>
+            <option selected disabled value>No Data</option>
+          </template>
+        </select>
       </div>
-    </div>
+      <div class="form-group">
+        <table class="table table-stripped">
+          <thead>
+            <tr>
+              <td>Name</td>
+              <td>Category</td>
+              <td></td>
+            </tr>
+          </thead>
+          <tbody>
+            <template v-if="paymentParticipant != null">
+              <tr v-for="(participant,index) in paymentParticipant">
+                <template v-if="participant">
+                  <td>{{participant.user.name}}</td>
+                  <td>{{participant.competitionDetail.category.name}}</td>
+                  <td>
+                    <button class="btn-sm btn-danger" @click="removeParticipant(participant)">x</button>
+                  </td>
+                </template>
+              </tr>
+            </template>
+          </tbody>
+        </table>
+      </div>
+      <div class="form-group">
+        <input type="file" id="file" ref="file" v-on:change="handleFileUpload()">
+      </div>
+    </modal>
+    <modal
+      :idModal="'qualificationScore'"
+      :title="'Qualification Score'"
+      :bClick="register"
+      :bTitle="'Update'"
+    >
+      <div class="form-group">
+        <span>Participant Name and Category</span>
+        <select v-model="registerCompId" class="form-control">
+          <option
+            v-for="details in competition.competitionDetails"
+            :key="details.category.id"
+            :value="details.id"
+          >{{details.category.name}}</option>
+        </select>
+      </div>
+    </modal>
     <!--  End Modal -->
     <!-- Sart Modal -->
-    <!-- DataTarget id modal -->
-    <div
-      class="modal fade"
-      id="register"
-      tabindex="-1"
-      role="dialog"
-      aria-labelledby="myModalLabel"
-      aria-hidden="true"
+    <modal
+      :idModal="'register'"
+      :title="'Register Category'"
+      :bClick="register"
+      :bTitle="'Register'"
     >
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header justify-content-center">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-              <i class="now-ui-icons ui-1_simple-remove"></i>
-            </button>
-            <h4 class="title title-up">Register Tournament</h4>
-          </div>
-          <div class="modal-body">
-            <div class="form-group">
-              <span>Category</span>
-              <select v-model="registerCompId" class="form-control">
-                <option v-for="details in competition.competitionDetails" :key="details.category.id" :value="details.id">{{details.category.name}}</option>
-              </select>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" @click="register" class="btn btn-success">Register</button>
-            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-          </div>
-        </div>
+      <div class="form-group">
+        <span>Category</span>
+        <select v-model="registerCompId" class="form-control">
+          <option
+            v-for="details in competition.competitionDetails"
+            :key="details.category.id"
+            :value="details.id"
+          >{{details.category.name}}</option>
+        </select>
       </div>
-    </div>
+    </modal>
     <!--  End Modal -->
   </div>
 </template>
 
 <script>
 import Chart from "../../../components/Chart";
+import modal from "../../../components/modal";
 export default {
   layout: "portal",
   components: {
-    Chart
+    Chart,
+    modal
   },
-  methods :{
-    register() {
-      this.$axios.post('/participants',{'competition_detail_id':this.registerCompId,'user_id':this.user.id}).then((resp) => {
-        this.$toast.success("Success to Register Category");
+  watch: {
+    modelParticipant: function(val) {
+      if (val != undefined) {
+        this.paymentParticipant.push(val);
+        for (var i = 0; i < this.paymentParticipantList.length; i++) {
+          if (this.paymentParticipantList[i] === this.modelParticipant) {
+            this.paymentParticipantList.splice(i, 1);
+          }
+        }
+      }
+    }
+  },
+  methods: {
+    upload() {
+      let d = new Date();
+    
+      let data = new FormData()
+      data.append('receipt_date',d.getFullYear()+"/"+(d.getMonth()+1)+"/"+d.getDate())
+      data.append('file',this.file)
+      for(let i=0;i<this.paymentParticipant.length;i++){
+        data.append('participants['+i+']',this.paymentParticipant[i].id)
+      }
+      
+      this.$axios.post('/payment-receipts',data,{headers:{'Content-Type':'multipart/form-data'}}).then((resp) => {
+        this.$toast.success("Berhasil Upload Data")
       }).catch((e) =>{
+        this.$toast.error("Something Wrong about your data");
         console.log(e)
-        this.$toast.error("failed to Register")
       })
+    },
+    handleFileUpload() {
+      this.file = this.$refs.file.files[0];
+    },
+    removeParticipant: function(participant) {
+      this.paymentParticipantList.push(participant);
+      for (let i = 0; i < this.paymentParticipant.length; i++) {
+        if (this.paymentParticipant[i] === participant) {
+          this.paymentParticipant.splice(i, 1);
+        }
+      }
+    },
+    openQualificationModal(id) {
+      this.participantId = id;
+    },
+    orderByTotal(detail) {
+      return _.orderBy(
+        detail.participants,
+        ["totalScore", "totalsx10", "totals10"],
+        ["desc", "desc", "desc"]
+      );
+    },
+    register() {
+      this.$axios
+        .post("/participants", {
+          competition_detail_id: this.registerCompId,
+          user_id: this.user.id
+        })
+        .then(resp => {
+          this.$toast.success("Success to Register Category");
+        })
+        .catch(e => {
+          if (e.response.data.errors.user_id) {
+            if (
+              e.response.data.errors.user_id[0] ==
+              "The user id has already been taken."
+            )
+              this.$toast.error("You Have been Registered");
+          }
+        });
     }
   },
   data() {
     return {
+      file: null,
+      paymentParticipant: [],
+      modelParticipant: {},
+      paymentParticipantList: [],
+      participantId: null,
+      loaded: false,
       competition: {},
       registerCompId: null,
       data: {
-        labels: [
-          "January",
-          "February",
-          "March",
-          "April",
-          "May",
-          "June",
-          "July"
-        ],
+        labels: [],
         datasets: [
           {
             label: "Registered",
             backgroundColor: "green",
-            data: [40, 39, 10, 40, 39, 80, 40]
+            data: []
           },
           {
             label: "Slot Available",
             backgroundColor: "red",
-            data: [20, 39, 10, 40, 39, 80, 40]
+            data: []
           }
         ]
       },
@@ -355,20 +465,47 @@ export default {
             }
           ]
         }
-      }
+      },
+      loaded: false
     };
   },
   async beforeCreate() {
     console.log();
     this.$axios
       .get("/competitions/" + this.$route.params.id, {
-        params: { load: "competitionDetails.category" }
+        params: {
+          load: "competitionDetails.category,competitionDetails.participants"
+        }
       })
       .then(resp => {
+        let labels = this.data.labels;
+        let dataset = this.data.datasets;
         this.competition = resp.data.data;
+
+        _.map(this.competition.competitionDetails, function(comp) {
+          labels.push(comp.category.name);
+          dataset[0].data.push(comp.registered);
+          dataset[1].data.push(comp.available);
+        });
+        this.data.labels = labels;
+        this.loaded = true;
       })
       .catch(e => {
         // this.$router.push('/404')
+      });
+
+    this.$axios
+      .get("/participants", {
+        params: {
+          load: "competitionDetail.category",
+          payment: this.$route.params.id
+        }
+      })
+      .then(resp => {
+        this.paymentParticipantList = resp.data.data;
+      })
+      .catch(e => {
+        console.log(e.response.data.errors);
       });
   }
 };
