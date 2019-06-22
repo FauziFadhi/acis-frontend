@@ -5,19 +5,13 @@ export const getters = {
     user (state) {
         return state.user
     },
-    token (state) {
-        return state.token
+    storageApi (state) {
+        return state.storageApi
     }
 }
 
 export const state = () =>({
     user: null,
-    token: null,
+    storageApi: 'http://localhost:8000/storage/',
     loggedIn: false
 })
-
-export const mutations = {
-    setToken(state, token) {
-      state.token = token
-    }
-  }

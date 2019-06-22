@@ -9,7 +9,7 @@ const User = {
                 ...mapGetters({
                     user: 'auth/user',
                     loggedIn: 'auth/loggedIn',
-                    token: 'auth/token'
+                    storageApi: 'auth/storageApi'
                 })
             }
         })

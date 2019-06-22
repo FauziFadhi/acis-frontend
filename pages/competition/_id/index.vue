@@ -266,7 +266,7 @@
       <div class="form-group">
         <span>Participant Name and Category</span>
         <select v-model="modelParticipant" class="form-control">
-          <template v-if="paymentParticipant.length != 0">
+          <template v-if="paymentParticipantList.length != 0">
           <option
             v-for="(participant,i) in paymentParticipantList"
             :key="i"
@@ -305,6 +305,8 @@
       </div>
       <div class="form-group">
         <input type="file" id="file" ref="file" v-on:change="handleFileUpload()">
+        <br>
+        <span v-if="errors.file" class="text-danger">{{errors.file[0]}}</span>
       </div>
     </modal>
     <modal
@@ -383,7 +385,8 @@ export default {
         this.$toast.success("Berhasil Upload Data")
       }).catch((e) =>{
         this.$toast.error("Something Wrong about your data");
-        console.log(e)
+        this.errors = e.response.data.errors;
+        console.log(e.response.data.errors)
       })
     },
     handleFileUpload() {
@@ -437,6 +440,9 @@ export default {
       loaded: false,
       competition: {},
       registerCompId: null,
+      errors: {
+        file: []
+      },
       data: {
         labels: [],
         datasets: [
@@ -505,7 +511,7 @@ export default {
         this.paymentParticipantList = resp.data.data;
       })
       .catch(e => {
-        console.log(e.response.data.errors);
+        this.errose.response.data.errors;
       });
   }
 };

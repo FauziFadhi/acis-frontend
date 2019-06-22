@@ -188,7 +188,7 @@
                     </span>
                     <select class="form-control" v-model="province">
                       <option value disabled selected>Province</option>
-                      <option :value="province" v-for="province in Object.keys(provinces)" :key="province">{{province}}</option>
+                      <option style="text-color:#ffffff !important; background-color:#000000 !important;" :value="province" v-for="province in Object.keys(provinces)" :key="province">{{province}}</option>
                     </select>
                   </div>
                   <span class="text-danger" v-if="errors.city_id">
@@ -200,7 +200,7 @@
                     </span>
                     <select v-model="form.city_id" class="form-control text-black">
                       <option value disabled selected>City</option>
-                      <option :value="city.id" v-for="city in cities" :key="city.id">{{city.name}}</option>
+                      <option style="text-color:#ffffff !important; background-color:#000000 !important;" :value="city.id" v-for="city in cities" :key="city.id">{{city.name}}</option>
                     </select>
                   </div>
                 </div>
