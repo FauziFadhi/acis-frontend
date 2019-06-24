@@ -189,7 +189,7 @@
                           <th>Nama</th>
                           <th>Total</th>
                           <th>X+10</th>
-                          <th>10</th>
+                          <th>X</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -205,7 +205,7 @@
                           <td>{{participant.user.name}}</td>
                           <td>{{participant.totalScore}}</td>
                           <td>{{participant.totalsx10}}</td>
-                          <td>{{participant.totals10}}</td>
+                          <td>{{participant.totalsx}}</td>
                         </tr>
                       </tbody>
                     </table>
@@ -404,9 +404,9 @@ export default {
       this.participantId = id;
     },
     orderByTotal(detail) {
-      return _.orderBy(
-        detail.participants,
-        ["totalScore", "totalsx10", "totals10"],
+      return _.orderBy(_.filter(detail.participants,{'status':'Confirmed'})
+        ,
+        ["totalScore", "totalsx10", "totalsx"],
         ["desc", "desc", "desc"]
       );
     },

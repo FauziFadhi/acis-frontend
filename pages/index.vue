@@ -226,7 +226,7 @@ export default {
     if(this.user)
       id = this.user.id
     this.$axios
-      .get("/competitions?load=createdBy,city&notCreatedBy="+id)
+      .get("/competitions?load=createdBy,city&notCreatedBy="+id,{params: {status:'Confirmed'}})
       .then(resp => {
         this.competitions = resp.data.data;
       })
@@ -236,7 +236,7 @@ export default {
     if (this.user != null)
       this.$axios
         .get("/competitions?load=createdBy,city&notCreatedBy="+id, {
-          params: { province: this.user.city.province }
+          params: { province: this.user.city.province, status:'Confirmed' }
         })
         .then(resp => {
           this.byProvince = resp.data.data;

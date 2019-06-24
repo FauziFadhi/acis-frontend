@@ -19,30 +19,170 @@
           <td>{{comp.start_date}} - {{comp.end_date}}</td>
           <td>{{comp.status}}</td>
           <td>
-            <nuxt-link class="btn-sm btn-success" :to="{path:'/dashboard/competition/'+comp.id}">Detail</nuxt-link>
+            <template v-if="user.id != 1">
+              <nuxt-link
+                class="btn-sm btn-success"
+                :to="{path:'/dashboard/competition/'+comp.id}"
+              >Detail</nuxt-link>
+            </template>
+            <template v-else>
+              <button
+                @click="getCompetition(comp)"
+                class="btn-sm btn-success"
+                data-target="#validateCompetition"
+                data-toggle="modal"
+              >validate</button>
+            </template>
           </td>
         </tr>
       </tbody>
     </table>
+    <dashboardModal :idModal="'validateCompetition'" :title="'Validate Competition'">
+      <template v-slot:default>
+        <div class="col-md-12 px-0">
+          <div class="col-md-12 px-0">
+            <div class="form-group">
+              <span>Name</span>:
+              <span class="font-weight-bold">{{competition.name}}</span>
+            </div>
+          </div>
+          <div class="col-md-12 px-0">
+            <div class="form-group">
+              <span>Province / City</span>:
+              <span class="font-weight-bold">{{competition.city.province}} / {{competition.city.city}}</span>
+            </div>
+          </div>
+          <div class="col-md-12 px-0">
+            <div class="form-group">
+              <span>Start Date - End Date</span>:
+              <span class="font-weight-bold">{{competition.start_date}} - {{competition.end_date}}</span>
+            </div>
+          </div>
+          <div class="col-md-12 px-0">
+            <div class="form-group">
+              <span>Address</span>:
+              <span class="font-weight-bold">{{competition.address}}</span>
+            </div>
+          </div>
+          <div class="col-md-12 px-0">
+            <div class="form-group">
+              <span>Description</span>:
+              <span class="font-weight-bold">{{competition.description}}</span>
+            </div>
+          </div>
+          <div class="col-md-12 px-0">
+            <div class="form-group">
+              <span>Created By</span>:
+              <span class="font-weight-bold">{{competition.createdBy.name}}</span>
+            </div>
+          </div>
+          <div class="col-md-12 justify-content-center px-0">
+            <table class="table table-stripped table-bordered">
+              <thead>
+                <tr>
+                  <th>Category Name</th>
+                  <th>Quota</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="detail in competition.competitionDetails" :key="detail.id">
+                  <td>{{detail.category.name}}</td>
+                  <td>{{detail.quota}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="col-md-12 justify-content-center px-0">
+            <table class="table table-stripped table-bordered">
+              <thead>
+                <tr>
+                  <th>Document</th>
+                  <th>Url</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="upload in competition.competitionUploads" :key="upload.id">
+                  <td>{{upload.category.name}}</td>
+                  <td>{{upload.quota}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </template>
+      <template v-slot:footer>
+        <button type="button" class="btn btn-success" @click="competitionValidate(true)">Accept</button>
+        <button type="button" class="btn-sm btn-danger" @click="competitionValidate(false)">Reject</button>
+      </template>
+    </dashboardModal>
   </div>
 </template>
 
 <script>
+import dashboardModal from "../../components/dashboardModal";
 export default {
-  components: {},
+  components: {
+    dashboardModal
+  },
   data() {
     return {
-      competitions: []
+      competitions: [],
+      competition: {
+        city:{},
+        competitionDetails: [
+          {category:{}}
+        ],
+        competitionUploads: [],
+        createdBy: {}
+      }
     };
   },
+  computed:{
+    getUploads(){
+      return _.filter(this.competition.competitionUploads,{'type':'pdf'})
+    }
+  },
+  methods:{
+    getCompetition(competition){
+      this.competition = competition;
+    },
+    competitionValidate(boolean){
+      let data = {};
+      if(boolean)
+        data.status = "Confirmed"
+      else
+        data.status = "Rejected"
+
+      this.$axios.put('/competitions/'+this.competition.id,data).then((resp) =>
+        this.$toast.success("validation Complete")
+      ).catch((e) => {
+        this.$toast.error("Something wrong !!");
+        console.log(e.response.data.errors)
+      }
+      )
+    }
+  },
   async created() {
-    this.$axios
-      .get("/competitions/", {
-        params: { createdBy: this.user.id, load: "city" }
-      })
-      .then(resp => {
-        this.competitions = resp.data.data;
-      });
+    if (this.user.id != 1) {
+      this.$axios
+        .get("/competitions/", {
+          params: { createdBy: this.user.id, load: "city" }
+        })
+        .then(resp => {
+          this.competitions = resp.data.data;
+        });
+    } else {
+      this.$axios
+        .get("/competitions/", {
+          params: {
+            load:
+              "city,competitionDetails.category,competitionUploads,createdBy"
+          }
+        })
+        .then(resp => {
+          this.competitions = resp.data.data;
+        });
+    }
   },
   mounted() {
     var minimalData = {

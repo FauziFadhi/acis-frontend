@@ -17,8 +17,7 @@
 
       <!-- Modal footer -->
       <div class="modal-footer">
-        <button type="button" @click="bClick" class="btn btn-success">{{bTitle}}</button>
-        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+        <slot name="footer"></slot>
       </div>
 
     </div>
@@ -28,7 +27,7 @@
 
 <script>
 export default {
-    props: ['idModal','title', 'bClick','bTitle']
+    props: ['idModal','title']
 }
 </script>
 

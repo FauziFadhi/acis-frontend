@@ -45,7 +45,7 @@
                         <td>{{i+1}}</td>
                         <td>{{participant.user.name}}</td>
                         <td>{{participant.status}}</td>
-                        <td>{{getPaymentLastStatus(participant.paymentReceipts).status}}</td>
+                        <td>{{getPaymentLastStatus(participant.paymentReceipts)}}</td>
                         <td>
                           <button
                             class="btn-sm btn-success"
@@ -75,23 +75,77 @@
     <!-- /.col -->
 
     <!-- Sart Modal -->
-    <dashboardModal
-      :idModal="'paymentValidation'"
-      :title="'Payment Validation'"
-      :bClick="validation"
-      :bTitle="'Validation'"
-    >
-      <div class="col-md-12 justify-content-center" v-if="paymentReceipt">
-        <img
-          data-target="#fullimage"
-          data-toggle="modal"
-          :src="this.storageApi+paymentReceipt[0].uri"
-          style="max-width:200px; max-height:200px;"
-          alt
-        >
-      </div>
+    <dashboardModal :idModal="'paymentValidation'" :title="'Payment Validation'">
+      <template v-slot:default>
+        <div class="col-md-12 justify-content-center" v-if="paymentReceipt">
+          <div class="row">
+            <div class="col-md-4">
+              <a href="#">
+                <img
+                  data-target="#fullimage"
+                  data-toggle="modal"
+                  :src="storageApi+paymentReceipt.uri"
+                  style="max-width:200px; max-height:200px;"
+                  alt
+                >
+              </a>
+            </div>
+            <div class="col-md-8">
+              <table class="table-stripped table">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Category</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    v-for="(participant,index) in paymentReceipt.participants"
+                    :key="participant.id"
+                  >
+                    <td>{{index+1}}</td>
+                    <td>{{participant.user.name}}</td>
+                    <td>{{participant.competitionDetail.category.name}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </template>
+      <template v-slot:footer>
+        <button type="button" @click="validatePayment(true)" class="btn-sm btn-success">Accept</button>
+        <button type="button" @click="validatePayment(false)" class="btn-sm btn-danger">Reject</button>
+      </template>
     </dashboardModal>
 
+    <div
+      v-if="paymentReceipt"
+      class="modal fade"
+      style="z-index:10001"
+      id="fullimage"
+      role="dialog"
+    >
+      <div
+        class="modal-dialog modal-lg m-0"
+        style="max-width:1920px !important; max-height:1080px !important;"
+      >
+        <div class="modal-content">
+          <div class="modal-body">
+            <img
+              :src="this.storageApi+paymentReceipt.uri"
+              style="max-width:100%; max-height:100%;"
+              alt="click for fullscreen"
+            >
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    {{test}}
   </div>
 </template>
 
@@ -103,7 +157,9 @@ export default {
     return {
       competition: {},
       participantId: null,
-      paymentReceipt: null
+      paymentReceipt: {
+        id: 0
+      }
     };
   },
   methods: {
@@ -111,39 +167,67 @@ export default {
       this.participantId = id;
       console.log(this.participantId);
     },
-    validation() {},
+    validatePayment: function(boolean) {
+      let data = {
+        status: null
+      };
+      if(boolean) data.status ="Accepted"
+      else data.status = "Rejected"
+
+      this.$axios
+        .put("/payment-receipts/" + this.paymentReceipt.id, data)
+        .then(resp => {
+          this.$toast.success("change Status success");
+        })
+        .catch(e => {
+          this.$toast.error("uppss Something wrong about your data");
+          console.log(e.response.data.errors);
+        });
+
+      console.log(data.status);
+    },
     getPaymentLastStatus(status) {
-      return _.last(status);
+      let data = _.last(status);
+
+      if(data)
+      return data.status
+
+      else return "No Payment"
     }
   },
   watch: {
     participantId: function(val) {
       this.$axios
         .get("/payment-receipts", {
-          params: { load: "participants", participantId: val }
+          params: {
+            load: "participants.competitionDetail.category",
+            participantId: val
+          }
         })
         .then(resp => {
-          this.paymentReceipt = resp.data.data;
+          this.paymentReceipt = _.last(resp.data.data);
         })
         .catch(e => {
           console.log(e.response.data.errors);
         });
     }
   },
-  created() {
-    this.$axios
+  computed: {
+    test(){
+      console.log("Test")  
+    }
+  },
+  async created() {
+    let {data} = await this.$axios
       .get("/competitions/" + this.$route.params.id, {
         params: {
           load:
             "competitionDetails.category,competitionDetails.participants.paymentReceipts"
         }
       })
-      .then(resp => {
-        this.competition = resp.data.data;
-      });
-  },
-  mounted() {
-    console.log(this.$route);
+
+      this.competition = data.data;
+      console.log(this.competition)
   },
   components: {
     dashboardModal
@@ -152,68 +236,4 @@ export default {
 </script>
 
 <style>
-.modal-image {
-  position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  overflow: hidden;
-}
-
-.modal-dialog-image {
-  position: fixed;
-  margin: 0;
-  width: 100%;
-  height: 100%;
-  padding: 0;
-}
-
-.modal-content-image {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  border: 2px solid #3c7dcf;
-  border-radius: 0;
-  box-shadow: none;
-}
-
-.modal-header-image {
-  position: absolute;
-  top: 0;
-  right: 0;
-  left: 0;
-  height: 50px;
-  padding: 10px;
-  background: #6598d9;
-  border: 0;
-}
-
-.modal-title-image {
-  font-weight: 300;
-  font-size: 2em;
-  color: #fff;
-  line-height: 30px;
-}
-
-.modal-body-image {
-  position: absolute;
-  top: 50px;
-  bottom: 60px;
-  width: 100%;
-  font-weight: 300;
-  overflow: auto;
-}
-
-.modal-footer-image {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  height: 60px;
-  padding: 10px;
-  background: #f1f3f5;
-}
 </style>

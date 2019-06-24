@@ -121,7 +121,9 @@
             <hr>
             <b-form-group>
               <label class="mr-lg-3 ml-5">THB</label>
-              <input type="file" @change="onFileChanged">
+              <input type="file" id="file" ref="file" v-on:change="handleFileUpload()">
+              <span v-if="errors.file" class="text-danger">{{errors.file[0]}}</span>
+
             </b-form-group>
             <hr>
             <b-form-group>
@@ -147,25 +149,29 @@ export default {
     return {
       indonesia: require("~/static/city_province.json"),
       selected: {},
-      errors: {},
+      errors: {
+        file: []
+      },
+      file: null,
       province: null,
       area: [{ id: "1", name: "Indoor" }, { id: "2", name: "Outdoor" }],
       categories: []
     };
   },
   methods: {
-    onFileChanged (event) {
-    const file = event.target.files[0]
+    handleFileUpload() {
+      this.file = this.$refs.file.files[0];
     },
     removeCategories: function(index) {
       this.selected.competitionDetails.splice(index, 1);
     },
     sendData: function() {
+      let data = new FormData();
       let date = moment($('#reservation').data('daterangepicker').startDate._d);
-      this.selected.start_date = date.tz('Asia/Jakarta').format("YYYY/MM/DD");
+      data.append('start_date',date.tz('Asia/Jakarta').format("YYYY/MM/DD"));
 
       date = moment($('#reservation').data('daterangepicker').endDate._d);
-      this.selected.end_date = date.tz('Asia/Jakarta').format("YYYY/MM/DD");
+      data.append('end_date',date.tz('Asia/Jakarta').format("YYYY/MM/DD"));
       this.selected.competitionDetails = _.map(this.selected.competitionDetails, function(a){
         let id = a.id
         if(a.category_id)
@@ -175,8 +181,16 @@ export default {
         quota: a.quota
         }
       })
+      for(let i=0;i<this.selected.competitionDetails.length;i++){
+        data.append('competitionDetails['+i+']',this.selected.competitionDetails[i])
+      }
+      data.append('name',this.selected.name);
+      data.append('area_id',this.selected.area_id);
+      data.append('description',this.selected.description);
+      data.append('city_id',this.selected.city_id);
+      data.append('address',this.selected.address);
       axios
-        .post("http://localhost:8000/api/competitions", this.selected, {headers: {Authorization: this.$auth.$storage._state["_token.local"]}})
+        .post("http://localhost:8000/api/competitions", data, {headers: {'Content-Type':'multipart/form-data', Authorization: this.$auth.$storage._state["_token.local"]}})
         .then((resp) => {
           console.log(resp.data.data.id);
           this.$toast.success("success to create competitions");
