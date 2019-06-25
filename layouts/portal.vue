@@ -36,6 +36,7 @@
                 <i class="now-ui-icons business_badge"></i>
                 <p>Create Tournament</p>
               </nuxt-link>
+              
             </template>
             <button
               class="navbar-toggler navbar-toggler"
@@ -158,7 +159,7 @@ export default {
   methods: {
     async logout() {
       await this.$auth.logout();
-      this.$router.push('/login')
+      this.$router.push("/login");
     }
   },
   head: {

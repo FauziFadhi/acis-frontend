@@ -1,153 +1,195 @@
 <template>
-<div>
-
-  <!-- <Alert v-if="alert" :type="type" :mes="mes" :title="Title"/> -->
-  <div class="row">
-    <div class="col-md-4">
-      <div class="card card-danger">
-        <div class="card-header">
-          <h3 class="card-title">Competition Detail</h3>
-        </div>
-        <div class="card-body">
-          <div class="col-md-12">
-            <b-form-group>
-              <b-form-radio-group v-model="selected.area_id" text-field="name" value-field="id" :options="area">
-              </b-form-radio-group>
-            </b-form-group>
-              <span v-if="errors.area_id" class="text-danger">Area is required</span>
+  <div>
+    <!-- <Alert v-if="alert" :type="type" :mes="mes" :title="Title"/> -->
+    <div class="row">
+      <div class="col-md-4">
+        <div class="card card-danger">
+          <div class="card-header">
+            <h3 class="card-title">Competition Detail</h3>
           </div>
-          <hr>
-          <b-form-group>
-            <v-select
-              style="max-height:300px;"
-              v-model="selected.competitionDetails"
-              multiple
-              :closeOnSelect="false"
-              height="50"
-              hide-selected
-              max-height="200px"
-              placeholder="Type Here for search"
-              :options="categories"
-              label="name"
-            ></v-select>
-          </b-form-group>
-              <span v-if="errors.competitionDetails" class="text-danger">{{errors.competitionDetails[0]}}</span>
-          <br>
-          <b-form-group class="mb-0">
-            <div>
-              <table class="table table-condensed mb-0">
-                <thead class="d-block">
-                  <tr>
-                    <th style="width:90%;">Category</th>
-                    <th style="width: 40px">Quota</th>
-                    <th style="width: 40px"></th>
-                  </tr>
-                </thead>
-                <tbody class="overflow-auto d-block" style="max-height:400px;">
-                  <tr v-for="(category,index) in orderCategory" :key="index">
-                    <td style="width:100%;">{{category.name}}</td>
-                    <td style="width: 40px"><input type="text" size="1" v-model="selected.competitionDetails[index].quota"></td>
-                    <td style="width: 40px">
-                      <button v-on:click="removeCategories(index)" class="btn btn-sm btn-danger">x</button>
-                    </td>
-                  <span v-if="errors.competitionDetails" class="text-danger">{{errors.competitionDetails[index].quota}}</span>
-                  </tr>
-                </tbody>
-              </table>
+          <div class="card-body">
+            <div class="col-md-12">
+              <b-form-group>
+                <b-form-radio-group
+                  v-model="selected.area_id"
+                  text-field="name"
+                  value-field="id"
+                  :options="area"
+                ></b-form-radio-group>
+              </b-form-group>
+              <span v-if="errors.area_id" class="text-danger">Area is required</span>
             </div>
-          </b-form-group>
+            <hr>
+            <b-form-group>
+              <v-select
+                style="max-height:300px;"
+                v-model="selected.competitionDetails"
+                multiple
+                :closeOnSelect="false"
+                height="50"
+                hide-selected
+                max-height="200px"
+                placeholder="Type Here for search"
+                :options="categories"
+                label="name"
+              ></v-select>
+            </b-form-group>
+            <span
+              v-if="errors.competitionDetails"
+              class="text-danger"
+            >{{errors.competitionDetails[0]}}</span>
+            <br>
+            <b-form-group class="mb-0">
+              <div>
+                <table class="table table-condensed mb-0">
+                  <thead class="d-block">
+                    <tr>
+                      <th style="width:90%;">Category</th>
+                      <th style="width: 40px">Quota</th>
+                      <th style="width: 40px"></th>
+                    </tr>
+                  </thead>
+                  <tbody class="overflow-auto d-block" style="max-height:400px;">
+                    <tr v-for="(category,index) in orderCategory" :key="index">
+                      <td style="width:100%;">{{category.name}}</td>
+                      <td style="width: 40px">
+                        <input
+                          type="text"
+                          size="1"
+                          v-model="selected.competitionDetails[index].quota"
+                        >
+                      </td>
+                      <td style="width: 40px">
+                        <button v-on:click="removeCategories(index)" class="btn btn-sm btn-danger">x</button>
+                      </td>
+                      <span
+                        v-if="errors.competitionDetails"
+                        class="text-danger"
+                      >{{errors.competitionDetails[index].quota}}</span>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </b-form-group>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- Competition Information -->
-    <div class="col-md-8">
-      <div class="card card-primary">
-        <div class="card-header">
-          <h3 class="card-title">Competition Information</h3>
-        </div>
-        <div class="card-body">
-          <div class="form-group">
-            <label class="col-sm-2 control label">Name</label>
-            <div class="col-sm-10">
-              <input type="text" v-model="selected.name" class="form-control">
-              <span v-if="errors.name" class="text-danger">{{errors.name[0]}}</span>
-            </div>
+      <!-- Competition Information -->
+      <div class="col-md-8">
+        <div class="card card-primary">
+          <div class="card-header">
+            <h3 class="card-title">Competition Information</h3>
           </div>
-          <div class="form-group">
-            <label class="col-sm-2 control label">Address</label>
-            <div class="col-sm-10">
-              <textarea name id cols="30" v-model="selected.address" rows="3" class="form-control"></textarea>
-              <span v-if="errors.address" class="text-danger">{{errors.address[0]}}</span>
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="col-sm-2 control label">Description</label>
-            <div class="col-sm-10">
-              <textarea name id cols="30" v-model="selected.description" rows="3" class="form-control"></textarea>
-              <span v-if="errors.description" class="text-danger">{{errors.description[0]}}</span>
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="col-sm-2 control label">Date</label>
-            <div class="col-sm-10">
-              <div class="input-group">
-                <div class="input-group-prepend">
-                  <span class="input-group-text">
-                    <i class="fa fa-calendar"></i>
-                  </span>
-                </div>
-                <input type="text" class="form-control float-right" id="reservation">
+          <div class="card-body">
+            <div class="form-group">
+              <label class="col-sm-2 control label">Name</label>
+              <div class="col-sm-10">
+                <input type="text" v-model="selected.name" class="form-control">
+                <span v-if="errors.name" class="text-danger">{{errors.name[0]}}</span>
               </div>
             </div>
-          </div>
-          <div class="form-group">
-            <label class="col-sm-2 control label">Province</label>
-            <div class="col-sm-10">
-              <v-select
-                v-model="province"
-                id="province"
-                placeholder="Type Here"
-                :options="Object.keys(provinces)"
-              ></v-select>
+            <div class="form-group">
+              <label class="col-sm-2 control label">Address</label>
+              <div class="col-sm-10">
+                <textarea
+                  name
+                  id
+                  cols="30"
+                  v-model="selected.address"
+                  rows="3"
+                  class="form-control"
+                ></textarea>
+                <span v-if="errors.address" class="text-danger">{{errors.address[0]}}</span>
+              </div>
             </div>
-          </div>
-          <div class="form-group">
-            <label class="col-sm-2 control label">City / Region</label>
-            <div class="col-sm-10">
-              <v-select placeholder="Type Here" label="name" :options="cities" @input="setCity"/>
-              <span v-if="errors.city_id" class="text-danger">City is Required</span>
+            <div class="form-group">
+              <label class="col-sm-2 control label">Description</label>
+              <div class="col-sm-10">
+                <textarea
+                  name
+                  id
+                  cols="30"
+                  v-model="selected.description"
+                  rows="3"
+                  class="form-control"
+                ></textarea>
+                <span v-if="errors.description" class="text-danger">{{errors.description[0]}}</span>
+              </div>
             </div>
-            <hr>
-            <b-form-group>
-              <label class="mr-lg-3 ml-5">THB</label>
-              <input type="file" id="file" ref="file" v-on:change="handleFileUpload()">
-              <span v-if="errors.file" class="text-danger">{{errors.file[0]}}</span>
-            </b-form-group>
-            <b-form-group>
-              <label class="mr-lg-3 ml-5">Image</label>
-              <input type="file" id="images" ref="images" multiple="multiple">
-              <span v-if="errors.file" class="text-danger"></span>
-            </b-form-group>
-            <hr>
-            <b-form-group>
-              <b-button class="btn-success" v-on:click="sendData">Create Tournament</b-button>
-            </b-form-group>
+            <div class="form-group">
+              <label class="col-sm-2 control label">Date</label>
+              <div class="col-sm-10">
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text">
+                      <i class="fa fa-calendar"></i>
+                    </span>
+                  </div>
+                  <input type="text" class="form-control float-right" id="reservation">
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-2 control label">Province</label>
+              <div class="col-sm-10">
+                <v-select
+                  v-model="province"
+                  id="province"
+                  placeholder="Type Here"
+                  :options="Object.keys(provinces)"
+                ></v-select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-2 control label">City / Region</label>
+              <div class="col-sm-10">
+                <v-select placeholder="Type Here" label="name" :options="cities" @input="setCity"/>
+                <span v-if="errors.city_id" class="text-danger">City is Required</span>
+              </div>
+              <hr>
+              <b-form-group>
+                <label class="mr-lg-3 ml-5">THB</label>
+                <input type="file" id="file" ref="file" v-on:change="handleFileUpload()">
+                <span v-if="errors.file" class="text-danger">{{errors.file[0]}}</span>
+              </b-form-group>
+              <b-form-group>
+                <label class="mr-lg-3 ml-5">Image</label>
+                <template>
+                  <div
+                    id="my-strictly-unique-vue-upload-multiple-image"
+                    style="display: flex; justify-content: center;"
+                  >
+                    <vue-upload-multiple-image
+                      @upload-success="uploadImageSuccess"
+                      @before-remove="beforeRemove"
+                      @edit-image="editImage"
+                      :data-images="images"
+                      dragText="Images"
+                      browseText="Browse"
+                      maxImage="3"
+                    ></vue-upload-multiple-image>
+                  </div>
+                </template>
+              </b-form-group>
+              <hr>
+              <b-form-group>
+                <b-button class="btn-success" v-on:click="sendData">Create Tournament</b-button>
+              </b-form-group>
+            </div>
           </div>
         </div>
+        {{selected}}
+        {{errors}}
       </div>
-      {{selected}}
-    {{errors}}
     </div>
   </div>
-</div>
-
 </template>
 
 <script>
 import daterangepicker from "daterangepicker";
-import axios from "axios";
 import moment from "moment-timezone";
+import axios from "axios";
 export default {
   data() {
     return {
@@ -157,59 +199,94 @@ export default {
         file: []
       },
       file: null,
-      images: [],
+      imagesUpload: [],
       province: null,
       area: [{ id: "1", name: "Indoor" }, { id: "2", name: "Outdoor" }],
       categories: []
     };
   },
   methods: {
+    uploadImageSuccess(formData, index, fileList) {
+      console.log('data', formData, index, fileList)
+      this.imagesUpload.push(formData.get('file'))
+      
+      // Upload image api
+      // axios.post('http://your-url-upload', formData).then(response => {
+      //   console.log(response)
+      // })
+    },
+    beforeRemove (index, done, fileList) {
+      console.log('index', index, fileList)
+      var r = confirm("remove image")
+      if (r == true) {
+        done()
+      } else {
+      }
+    },
+    editImage (formData, index, fileList) {
+      console.log('edit data', formData, index, fileList)
+    },
     handleFileUpload() {
       this.file = this.$refs.file.files[0];
+      console.log(this.file)
     },
     removeCategories: function(index) {
       this.selected.competitionDetails.splice(index, 1);
     },
     sendData: function() {
       let data = new FormData();
-      let date = moment($('#reservation').data('daterangepicker').startDate._d);
-      data.append('start_date',date.tz('Asia/Jakarta').format("YYYY/MM/DD"));
+      let date = moment($("#reservation").data("daterangepicker").startDate._d);
+      data.append("start_date", date.tz("Asia/Jakarta").format("YYYY/MM/DD"));
 
-      date = moment($('#reservation').data('daterangepicker').endDate._d);
-      data.append('end_date',date.tz('Asia/Jakarta').format("YYYY/MM/DD"));
-      this.selected.competitionDetails = _.map(this.selected.competitionDetails, function(a){
-        let id = a.id
-        if(a.category_id)
-          id = a.category_id
-        return {'category_id': id,
-        'name': a.name,
-        quota: a.quota
+      date = moment($("#reservation").data("daterangepicker").endDate._d);
+      data.append("end_date", date.tz("Asia/Jakarta").format("YYYY/MM/DD"));
+      this.selected.competitionDetails = _.map(
+        this.selected.competitionDetails,
+        function(a) {
+          let id = a.id;
+          if (a.category_id) id = a.category_id;
+          return { category_id: id, name: a.name, quota: a.quota };
         }
-      })
-      for(let i=0; i<this.selected.competitionDetails.length;i++){
-
-        data.append('competitionDetails['+i+'][category_id]',this.selected.competitionDetails[i].category_id)
-        data.append('competitionDetails['+i+'][quota]',this.selected.competitionDetails[i].quota)
+      );
+      for (let i = 0; i < this.selected.competitionDetails.length; i++) {
+        data.append(
+          "competitionDetails[" + i + "][category_id]",
+          this.selected.competitionDetails[i].category_id
+        );
+        data.append(
+          "competitionDetails[" + i + "][quota]",
+          this.selected.competitionDetails[i].quota
+        );
       }
-      data.append('name',this.selected.name);
-      data.append('area_id',this.selected.area_id);
-      data.append('description',this.selected.description);
-      data.append('city_id',this.selected.city_id);
-      data.append('address',this.selected.address);
-      data.append('competitionUploads[0][type]',"pdf");
-      data.append('competitionUploads[0][file]',this.file);
+      data.append("name", this.selected.name);
+      data.append("area_id", this.selected.area_id);
+      data.append("description", this.selected.description);
+      data.append("city_id", this.selected.city_id);
+      data.append("address", this.selected.address);
+      data.append("competitionUploads[0][type]", "pdf");
+      data.append("competitionUploads[0][file]", this.file);
+      
+      for (let i = 0; i < this.imagesUpload.length; i++) {
+        data.append("competitionUploads["+(i+1)+"][type]", "pdf");
+        data.append("competitionUploads["+(i+1)+"][file]",this.imagesUpload[i]);
+      }
       axios
-        .post("http://localhost:8000/api/competitions", data, {headers: {'Content-Type':'multipart/form-data', Authorization: this.$auth.$storage._state["_token.local"]}})
-        .then((resp) => {
-          console.log(resp.data.data.id);
-          this.$toast.success("success to create competitions");
-          this.$router.push({path: '/dashboard/competition/'+resp.data.data.id})
-          console.log(this.$router)
+        .post("http://localhost:8000/api/competitions", data, {
+          headers: {
+            "Content-Type": "multipart/form-data", Authorization: this.$auth.$storage._state["_token.local"]
+          }
         })
-        .catch((e) => {
+        .then(resp => {
+          this.$toast.success("success to create competitions");
+          this.$router.push({
+            path: "/dashboard/competition/" + resp.data.data.id
+          });
+          console.log(this.$router);
+        })
+        .catch(e => {
           this.errors = e.response.data.errors;
-          this.$toast.error(e.response.data.message)
-          this.selected.competitionDetails= []
+          this.$toast.error(e.response.data.message);
+          this.selected.competitionDetails = [];
         });
     },
     setCity(value) {
@@ -229,12 +306,10 @@ export default {
   },
   mounted() {
     $(function() {
-      $("#reservation").daterangepicker({
-
-      });
+      $("#reservation").daterangepicker({});
     });
-    axios.get("http://localhost:8000/api/categories").then((resp) => {
-      this.categories = resp.data.data
+    axios.get("http://localhost:8000/api/categories").then(resp => {
+      this.categories = resp.data.data;
     });
   }
 };

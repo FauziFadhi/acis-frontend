@@ -17,7 +17,7 @@
           <td>{{comp.name}}</td>
           <td>{{comp.city.province}} / {{comp.city.city}}</td>
           <td>{{comp.start_date}} - {{comp.end_date}}</td>
-          <td>{{comp.status}}</td>
+          <td :class="(comp.status=='Pending')?'text-warning':(comp.status=='Confirmed')?'text-success':'text-danger'">{{comp.status}}</td>
           <td>
             <template v-if="user.id != 1">
               <nuxt-link
@@ -176,7 +176,8 @@ export default {
         .get("/competitions/", {
           params: {
             load:
-              "city,competitionDetails.category,competitionUploads,createdBy"
+              "city,competitionDetails.category,competitionUploads,createdBy",
+              orderByDate: 'desc'
           }
         })
         .then(resp => {
