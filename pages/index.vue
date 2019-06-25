@@ -53,44 +53,44 @@
             <p class="category">This Month Tournament List</p>
             <!-- Nav tabs -->
             <div class="card">
-                <div class="card-body px-0" style="overflow-y:auto; max-height:400px;">
-              <template v-if="byMonth || byMonth == []">
-              <template v-for="comp in byMonth">
-                  <div class="card-body border-bottom px-0">
-                    <div class="col-md-12 p-0">
-                      <div class="row px-4">
-                        <div class="col-md">
-                          <div class="card-title font-weight-bold mb-1">{{comp.name}}</div>
-                          <div class="card-subtitle text-secondary">{{comp.createdBy.name}}</div>
-                          <p class="text-justify">{{comp.description}}</p>
-                          <div class="d-flex mt-5">
-                            <div>
-                              <nuxt-link
-                                class="btn-sm btn-secondary"
-                                :to="'competition/'+ comp.id"
-                              >Detail</nuxt-link>
-                              <nuxt-link class="btn-sm btn-secondary" to="#">Register</nuxt-link>
+              <div class="card-body px-0" style="overflow-y:auto; max-height:400px;">
+                <template v-if="byMonth || byMonth == []">
+                  <template v-for="comp in byMonth">
+                    <div class="card-body border-bottom px-0">
+                      <div class="col-md-12 p-0">
+                        <div class="row px-4">
+                          <div class="col-md">
+                            <div class="card-title font-weight-bold mb-1">{{comp.name}}</div>
+                            <div class="card-subtitle text-secondary">{{comp.createdBy.name}}</div>
+                            <p class="text-justify">{{comp.description}}</p>
+                            <div class="d-flex mt-5">
+                              <div>
+                                <nuxt-link
+                                  class="btn-sm btn-secondary"
+                                  :to="'competition/'+ comp.id"
+                                >Detail</nuxt-link>
+                                <nuxt-link class="btn-sm btn-secondary" to="#">Register</nuxt-link>
+                              </div>
+                              <div
+                                class="ml-auto text-secondary"
+                                style="height=30px;"
+                              >{{comp.city.city}}, {{comp.city.province}} | {{d= new Date(comp.start_date).toDateString()}}</div>
                             </div>
-                            <div
-                              class="ml-auto text-secondary"
-                              style="height=30px;"
-                            >{{comp.city.city}}, {{comp.city.province}} | {{d= new Date(comp.start_date).toDateString()}}</div>
                           </div>
-                        </div>
-                        <div class="col-md-2 order-first p-0">
-                          <img src="#">
+                          <div class="col-md-2 order-first p-0">
+                            <img src="#">
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-              </template>
-              </template>
-              <template v-else>
+                  </template>
+                </template>
+                <template v-else>
                   <div class="card-body p-0 d-flex justify-content-center align-self-center">
-                      <div class="d-flex justify-content-center align-self-center">No Data</div>
+                    <div class="d-flex justify-content-center align-self-center">No Data</div>
                   </div>
-              </template>
-                </div>
+                </template>
+              </div>
             </div>
           </div>
         </div>
@@ -209,40 +209,41 @@ export default {
     return {
       competitions: [],
       byProvince: [],
-      thisMonth: []
+      thisMonth: [],
+      test: null
     };
   },
   computed: {
     byMonth() {
       return _.filter(this.competitions, function(a) {
         let d = new Date(a.start_date);
-        if (d.getMonth() == new Date().getMonth() && d.getFullYear() == new Date().getFullYear())
+        if (
+          d.getMonth() == new Date().getMonth() &&
+          d.getFullYear() == new Date().getFullYear()
+        )
           return a;
       });
     }
   },
-  created() {
+  async asyncData({ app, store }) {
     let id = 0;
-    if(this.user)
-      id = this.user.id
-    this.$axios
-      .get("/competitions?load=createdBy,city&notCreatedBy="+id,{params: {status:'Confirmed'}})
-      .then(resp => {
-        this.competitions = resp.data.data;
+    let byProvince = {
+      data:{}
+    }
+    if (store.$auth.$state.user) {
+      id = store.$auth.$state.user.id;
+      byProvince = await app.$axios
+      .get("/competitions?load=createdBy,city&notCreatedBy=" + id, {
+        params: { province: store.$auth.$state.user.city.province, status: "Confirmed" }
       })
-      .catch(e => {
-        console.log(e.response);
-      });
-    if (this.user != null)
-      this.$axios
-        .get("/competitions?load=createdBy,city&notCreatedBy="+id, {
-          params: { province: this.user.city.province, status:'Confirmed' }
-        })
-        .then(resp => {
-          this.byProvince = resp.data.data;
-        }).catch(e => {
-        console.log(e.response);
-      });
+    }
+    let competitions = await app.$axios
+      .get("/competitions?load=createdBy,city&notCreatedBy=" + id, {
+        params: { status: "Confirmed" }
+      })
+    return {competitions: competitions.data.data, byProvince: byProvince.data.data}
+  },
+  created() {
   },
   layout: "portal"
 };

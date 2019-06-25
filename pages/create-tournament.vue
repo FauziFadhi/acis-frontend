@@ -123,7 +123,11 @@
               <label class="mr-lg-3 ml-5">THB</label>
               <input type="file" id="file" ref="file" v-on:change="handleFileUpload()">
               <span v-if="errors.file" class="text-danger">{{errors.file[0]}}</span>
-
+            </b-form-group>
+            <b-form-group>
+              <label class="mr-lg-3 ml-5">Image</label>
+              <input type="file" id="images" ref="images" multiple="multiple">
+              <span v-if="errors.file" class="text-danger"></span>
             </b-form-group>
             <hr>
             <b-form-group>
@@ -153,6 +157,7 @@ export default {
         file: []
       },
       file: null,
+      images: [],
       province: null,
       area: [{ id: "1", name: "Indoor" }, { id: "2", name: "Outdoor" }],
       categories: []
@@ -181,14 +186,18 @@ export default {
         quota: a.quota
         }
       })
-      for(let i=0;i<this.selected.competitionDetails.length;i++){
-        data.append('competitionDetails['+i+']',this.selected.competitionDetails[i])
+      for(let i=0; i<this.selected.competitionDetails.length;i++){
+
+        data.append('competitionDetails['+i+'][category_id]',this.selected.competitionDetails[i].category_id)
+        data.append('competitionDetails['+i+'][quota]',this.selected.competitionDetails[i].quota)
       }
       data.append('name',this.selected.name);
       data.append('area_id',this.selected.area_id);
       data.append('description',this.selected.description);
       data.append('city_id',this.selected.city_id);
       data.append('address',this.selected.address);
+      data.append('competitionUploads[0][type]',"pdf");
+      data.append('competitionUploads[0][file]',this.file);
       axios
         .post("http://localhost:8000/api/competitions", data, {headers: {'Content-Type':'multipart/form-data', Authorization: this.$auth.$storage._state["_token.local"]}})
         .then((resp) => {

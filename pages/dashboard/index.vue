@@ -102,8 +102,8 @@
               </thead>
               <tbody>
                 <tr v-for="upload in competition.competitionUploads" :key="upload.id">
-                  <td>{{upload.category.name}}</td>
-                  <td>{{upload.quota}}</td>
+                  <td>Type</td>
+                  <td><a :href="storageApi+upload.url">download</a></td>
                 </tr>
               </tbody>
             </table>

@@ -58,7 +58,7 @@
                     </template>
                     <template v-else>
                       <tr>
-                        <td colspan="3" class="text-center">No Data</td>
+                        <td colspan="5" class="text-center">No Data</td>
                       </tr>
                     </template>
                   </tbody>

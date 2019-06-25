@@ -8,13 +8,12 @@
               <div class="mr-auto">
                 <p class="category">
                   {{competition.name}}
-                  <template v-if="loggedIn">
                     <button
+                      @click="validateLoggedIn"
                       data-target="#register"
                       data-toggle="modal"
                       class="btn-sm btn-success text-white"
                     >Register</button>
-                  </template>
                 </p>
               </div>
               <template v-if="loggedIn">
@@ -333,6 +332,7 @@
       :title="'Register Category'"
       :bClick="register"
       :bTitle="'Register'"
+      ref="registerModal"
     >
       <div class="form-group">
         <span>Category</span>
@@ -371,6 +371,15 @@ export default {
     }
   },
   methods: {
+    validateLoggedIn(){
+      if(this.user == null){
+        setTimeout(() => {
+          this.$router.push('/login')
+          }, 500);
+          this.$refs.registerModal.$el.id = "gg";
+          this.$toast.error("you have to logged in first")
+      }
+    },
     upload() {
       let d = new Date();
     
@@ -499,19 +508,20 @@ export default {
       .catch(e => {
         // this.$router.push('/404')
       });
-
-    this.$axios
+  },
+  asyncData({app, params}){
+    return app.$axios
       .get("/participants", {
         params: {
           load: "competitionDetail.category",
-          payment: this.$route.params.id
+          payment: params.id
         }
       })
-      .then(resp => {
-        this.paymentParticipantList = resp.data.data;
+      .then((resp) => {
+        return {paymentParticipantList : resp.data.data};
       })
-      .catch(e => {
-        this.errose.response.data.errors;
+      .catch((e) => {
+        this.errors.response.data.errors;
       });
   }
 };
