@@ -8,15 +8,19 @@
               <div class="mr-auto">
                 <p class="category">
                   {{competition.name}}
-                    <button
-                      @click="validateLoggedIn"
-                      data-target="#register"
-                      data-toggle="modal"
-                      class="btn-sm btn-success text-white"
-                    >Register</button>
+                  <button
+                    @click="validateLoggedIn"
+                    data-target="#register"
+                    data-toggle="modal"
+                    class="btn-lg btn-success text-white"
+                  >Register</button>
+                  <br>
+                  <span class="text-danger ml-3">
+                    Last date:
+                    {{competition.registration_due_date}}
+                  </span>
                 </p>
               </div>
-              <template v-if="loggedIn">
                 <p>
                   <!-- <span class="font-weight-bold">Payment Status:</span> -->
                   <span class="font-weight-bold">Payment Upload:</span>
@@ -24,10 +28,16 @@
                   <button
                     data-target="#paymentReceipt"
                     data-toggle="modal"
-                    class="btn-sm btn-info"
+                    @click="validateLoggedIn"
+                    class="btn-lg btn-info"
                   >Upload</button>
+                  <br>
+                  <span class="text-danger font-weight-bold ml-3">
+                    Last date:
+                    {{competition.payment_due_date}} / {{price}}
+                  </span>
+                  <br>
                 </p>
-              </template>
             </div>
           </div>
         </div>
@@ -266,12 +276,12 @@
         <span>Participant Name and Category</span>
         <select v-model="modelParticipant" class="form-control">
           <template v-if="paymentParticipantList.length != 0">
-          <option
-            v-for="(participant,i) in paymentParticipantList"
-            :key="i"
-            :value="participant"
-            :selected="(i==0)?true:false"
-          >{{participant.user.name}} || {{participant.competitionDetail.category.name}}</option>
+            <option
+              v-for="(participant,i) in paymentParticipantList"
+              :key="i"
+              :value="participant"
+              :selected="(i==0)?true:false"
+            >{{participant.user.name}} || {{participant.competitionDetail.category.name}}</option>
           </template>
           <template v-else>
             <option selected disabled value>No Data</option>
@@ -289,7 +299,7 @@
           </thead>
           <tbody>
             <template v-if="paymentParticipant != null">
-              <tr v-for="(participant,index) in paymentParticipant">
+              <tr v-for="participant in paymentParticipant" :key="participant.id">
                 <template v-if="participant">
                   <td>{{participant.user.name}}</td>
                   <td>{{participant.competitionDetail.category.name}}</td>
@@ -368,35 +378,49 @@ export default {
           }
         }
       }
+    },
+    competition: function(val){
+      this.currencyFormatted(val.price)
     }
   },
   methods: {
-    validateLoggedIn(){
-      if(this.user == null){
+    validateLoggedIn() {
+      if (this.user == null) {
         setTimeout(() => {
-          this.$router.push('/login')
-          }, 500);
-          this.$refs.registerModal.$el.id = "gg";
-          this.$toast.error("you have to logged in first")
+          this.$router.push("/login");
+        }, 500);
+        this.$refs.registerModal.$el.id = "gg";
+        this.$toast.error("you have to logged in first");
       }
     },
     upload() {
       let d = new Date();
-    
-      let data = new FormData()
-      data.append('receipt_date',d.getFullYear()+"/"+(d.getMonth()+1)+"/"+d.getDate())
-      data.append('file',this.file)
-      for(let i=0;i<this.paymentParticipant.length;i++){
-        data.append('participants['+i+']',this.paymentParticipant[i].id)
+
+      if(d> new Date(this.competition.payment_due_date))
+        return this.$toast.error("your payment is late for this tournament")
+
+      let data = new FormData();
+      data.append(
+        "receipt_date",
+        d.getFullYear() + "/" + (d.getMonth() + 1) + "/" + d.getDate()
+      );
+      data.append("file", this.file);
+      for (let i = 0; i < this.paymentParticipant.length; i++) {
+        data.append("participants[" + i + "]", this.paymentParticipant[i].id);
       }
-      
-      this.$axios.post('/payment-receipts',data,{headers:{'Content-Type':'multipart/form-data'}}).then((resp) => {
-        this.$toast.success("Berhasil Upload Data")
-      }).catch((e) =>{
-        this.$toast.error("Something Wrong about your data");
-        this.errors = e.response.data.errors;
-        console.log(e.response.data.errors)
-      })
+
+      this.$axios
+        .post("/payment-receipts", data, {
+          headers: { "Content-Type": "multipart/form-data" }
+        })
+        .then(resp => {
+          this.$toast.success("Berhasil Upload Data");
+        })
+        .catch(e => {
+          this.$toast.error("Something Wrong about your data");
+          this.errors = e.response.data.errors;
+          console.log(e.response.data.errors);
+        });
     },
     handleFileUpload() {
       this.file = this.$refs.file.files[0];
@@ -413,13 +437,16 @@ export default {
       this.participantId = id;
     },
     orderByTotal(detail) {
-      return _.orderBy(_.filter(detail.participants,{'status':'Confirmed'})
-        ,
+      return _.orderBy(
+        _.filter(detail.participants, { status: "Confirmed" }),
         ["totalScore", "totalsx10", "totalsx"],
         ["desc", "desc", "desc"]
       );
     },
     register() {
+      if(new Date() > new Date(this.competition.registration_due_date))
+        return this.$toast.error("you are late to join this tournament")
+
       this.$axios
         .post("/participants", {
           competition_detail_id: this.registerCompId,
@@ -429,6 +456,8 @@ export default {
           this.$toast.success("Success to Register Category");
         })
         .catch(e => {
+          if(e.response.status == 401)
+            this.$toast.error(e.response.data.message)
           if (e.response.data.errors.user_id) {
             if (
               e.response.data.errors.user_id[0] ==
@@ -437,6 +466,12 @@ export default {
               this.$toast.error("You Have been Registered");
           }
         });
+    },
+    currencyFormatted: function(num) {
+      let p = parseInt(num).toFixed(2).split(".");
+    this.price = "Rp" + p[0].split("").reverse().reduce(function(acc, num, i, orig) {
+        return  num=="-" ? acc : num + (i && !(i % 3) ? "," : "") + acc;
+    }, "") + "." + p[1];
     }
   },
   data() {
@@ -448,6 +483,7 @@ export default {
       participantId: null,
       loaded: false,
       competition: {},
+      price: null,
       registerCompId: null,
       errors: {
         file: []
@@ -509,7 +545,7 @@ export default {
         // this.$router.push('/404')
       });
   },
-  asyncData({app, params}){
+  asyncData({ app, params }) {
     return app.$axios
       .get("/participants", {
         params: {
@@ -517,10 +553,10 @@ export default {
           payment: params.id
         }
       })
-      .then((resp) => {
-        return {paymentParticipantList : resp.data.data};
+      .then(resp => {
+        return { paymentParticipantList: resp.data.data };
       })
-      .catch((e) => {
+      .catch(e => {
         this.errors.response.data.errors;
       });
   }

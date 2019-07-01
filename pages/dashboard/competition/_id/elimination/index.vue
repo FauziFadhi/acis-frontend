@@ -47,41 +47,92 @@
             </tbody>
             <tr></tr>
           </table>
+          <button
+            id="matchCallback"
+            hidden
+            data-target="#eliminationScore"
+            data-toggle="modal"
+          >asdsd</button>
         </div>
       </div>
     </div>
+    <dashboardModal :idModal="'eliminationScore'" :title="'Qualification Score'">
+      <template v-slot:default>
+        <div class="col-md-12 px-0">
+          <div class="row">
+          <div class="col-md-6 px-0">
+          <div class="col-md-6 px-0">
+            <div class="col-md px-0">{{match.participant_1.user.name}}</div>
+            <div class="col-md px-0"><h3>{{match.total_point_1}}</h3></div>
+          </div>
+          <div class="col-md-6 px-0">
+            <div class="col-md px-0">{{match.participant_2.user.name}}</div>
+            <div class="col-md px-0"><h3>{{match.total_point_2}}</h3></div>
+          </div>
+          <div class="col-md-6 px-0"></div>
+          </div>
+          </div>
+        </div>
+      </template>
+      <template v-slot:footer>
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+      </template>
+    </dashboardModal>
   </div>
 </template>
 
 <script>
-
+import dashboardModal from "../../../../../components/dashboardModal";
 export default {
-  mounted() {
-    var minimalData = {
-      teams: [
-        [null, null],
-        [null, null],
-        [null, null],
-        [null, null],
-        [null, null],
-        [null, null],
-        [null, null],
-        [null, null],
-        [null, null],
-        [null, null],
-        [null, null],
-        [null, null],
-        [null, null],
-        [null, null],
-        [null, null],
-        [null, null],
-       
-      ],
-      results: [[[3, 5], [5, 4]], [[3, 5], [5, 4]]]
+  components: {
+    dashboardModal
+  },
+  data() {
+    return {
+      match: {
+        participant_1:{
+          user: {
+            name: null
+          }
+        },
+        participant_2:{
+          user: {
+            name: null
+          }
+        }
+      },
     };
+  },
+  methods: {},
+  mounted() {
+    let matchData = {
+      teams: null,
+      results: null
+    };
+
+    this.$axios
+      .get("/eliminations", { params: { competition_detail_id: 1 } })
+      .then(resp => {
+        matchData = resp.data;
+        // matchData.results = resp.data.results
+        $(function() {
+          $("div#big .demo").bracket({
+            teamWidth: 200,
+            init: matchData,
+            onMatchClick: onclick
+
+            // decorator: { edit: edit_fn, render: render_fn }
+          });
+        });
+      });
 
     function edit_fn(container, data, doneCb) {}
 
+    function onclick(data) {
+      $("#matchCallback").click();
+      this.match = data;
+      console.log(this.match);
+    }
     // function render_fn(container, data, score, state) {
     //   switch (state) {
     //     case "entry-no-score":
@@ -92,28 +143,20 @@ export default {
     //       return;
     //   }
     // }
-
-    $(function() {
-      $("div#big .demo").bracket({
-        teamWidth: 200,
-        init: minimalData,
-        // decorator: { edit: edit_fn, render: render_fn }
-      });
-    });
   }
 };
 </script>
 
 <style>
 card-body {
-    overflow: hidden;
+  overflow: hidden;
 }
 
 ::-webkit-scrollbar {
-    width: 1px;
-    height: 1px;
+  width: 1px;
+  height: 1px;
 }
 ::-webkit-scrollbar-thumb {
-    background: rgb(123, 143, 255);
+  background: rgb(123, 143, 255);
 }
 </style>

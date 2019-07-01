@@ -18,6 +18,45 @@
                 ></b-form-radio-group>
               </b-form-group>
               <span v-if="errors.area_id" class="text-danger">Area is required</span>
+              <div class="form-group">
+                <label class="col-sm-10 px-0 control label">Registration Due Date</label>
+                <div class="col-sm-10 px-0">
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text">
+                        <i class="fa fa-calendar"></i>
+                      </span>
+                    </div>
+                    <vuejs-datepicker v-model="selected.registrationDate" :disabled-dates="disableDates"></vuejs-datepicker>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="col-sm-10 px-0 control label">Payment Due Date</label>
+                <div class="col-sm-10 px-0">
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text">
+                        <i class="fa fa-calendar"></i>
+                      </span>
+                    </div>
+                    <vuejs-datepicker v-model="selected.paymentDate" :disabled-dates="disableDates"></vuejs-datepicker>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="col-sm-10 px-0 control label">Payment Price</label>
+                <div class="col-sm-10 px-0">
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text">
+                        Rp.
+                      </span>
+                    </div>
+                    <input type="text" v-model="selected.price" name="currency-field" id="currency-field" pattern="^\$\d{1,3}(,\d{3})*(\.\d+)?$" value="" data-type="currency" placeholder="$1,000,000.00">
+                  </div>
+                </div>
+              </div>
             </div>
             <hr>
             <b-form-group>
@@ -165,9 +204,9 @@
                       @before-remove="beforeRemove"
                       @edit-image="editImage"
                       :data-images="images"
+                      :maxImage=3
                       dragText="Images"
                       browseText="Browse"
-                      maxImage="3"
                     ></vue-upload-multiple-image>
                   </div>
                 </template>
@@ -193,12 +232,22 @@ import axios from "axios";
 export default {
   data() {
     return {
+      disableDates:{
+        to: new Date()
+      },
       indonesia: require("~/static/city_province.json"),
-      selected: {},
+      selected: {
+        area_id:null,
+        price: "",
+        name: null,
+        address: null
+      },
       errors: {
+        area_id: null,
         file: []
       },
       file: null,
+      images: [],
       imagesUpload: [],
       province: null,
       area: [{ id: "1", name: "Indoor" }, { id: "2", name: "Outdoor" }],
@@ -207,28 +256,28 @@ export default {
   },
   methods: {
     uploadImageSuccess(formData, index, fileList) {
-      console.log('data', formData, index, fileList)
-      this.imagesUpload.push(formData.get('file'))
-      
+      console.log("data", formData, index, fileList);
+      this.imagesUpload.push(formData.get("file"));
+
       // Upload image api
       // axios.post('http://your-url-upload', formData).then(response => {
       //   console.log(response)
       // })
     },
-    beforeRemove (index, done, fileList) {
-      console.log('index', index, fileList)
-      var r = confirm("remove image")
+    beforeRemove(index, done, fileList) {
+      console.log("index", index, fileList);
+      var r = confirm("remove image");
       if (r == true) {
-        done()
+        done();
       } else {
       }
     },
-    editImage (formData, index, fileList) {
-      console.log('edit data', formData, index, fileList)
+    editImage(formData, index, fileList) {
+      console.log("edit data", formData, index, fileList);
     },
     handleFileUpload() {
       this.file = this.$refs.file.files[0];
-      console.log(this.file)
+      console.log(this.file);
     },
     removeCategories: function(index) {
       this.selected.competitionDetails.splice(index, 1);
@@ -259,21 +308,28 @@ export default {
         );
       }
       data.append("name", this.selected.name);
+      data.append("payment_due_date", moment(this.selected.payment_due_date).tz("Asia/Jakarta").format("YYYY/MM/DD"));
+      data.append("registration_due_date", moment(this.selected.registration_due_date).tz("Asia/Jakarta").format("YYYY/MM/DD"));
       data.append("area_id", this.selected.area_id);
       data.append("description", this.selected.description);
       data.append("city_id", this.selected.city_id);
       data.append("address", this.selected.address);
+      data.append("price", this.selected.price.replace(",",""));
       data.append("competitionUploads[0][type]", "pdf");
       data.append("competitionUploads[0][file]", this.file);
-      
+
       for (let i = 0; i < this.imagesUpload.length; i++) {
-        data.append("competitionUploads["+(i+1)+"][type]", "pdf");
-        data.append("competitionUploads["+(i+1)+"][file]",this.imagesUpload[i]);
+        data.append("competitionUploads[" + (i + 1) + "][type]", "pdf");
+        data.append(
+          "competitionUploads[" + (i + 1) + "][file]",
+          this.imagesUpload[i]
+        );
       }
       axios
         .post("http://localhost:8000/api/competitions", data, {
           headers: {
-            "Content-Type": "multipart/form-data", Authorization: this.$auth.$storage._state["_token.local"]
+            "Content-Type": "multipart/form-data",
+            Authorization: this.$auth.$storage._state["_token.local"]
           }
         })
         .then(resp => {
@@ -306,11 +362,97 @@ export default {
   },
   mounted() {
     $(function() {
-      $("#reservation").daterangepicker({});
+      $("#reservation").daterangepicker({minDate: new Date()});
     });
     axios.get("http://localhost:8000/api/categories").then(resp => {
       this.categories = resp.data.data;
     });
+    // Jquery Dependency
+
+$("input[data-type='currency']").on({
+    keyup: function() {
+      formatCurrency($(this));
+    },
+    blur: function() { 
+      formatCurrency($(this), "blur");
+    }
+});
+
+
+function formatNumber(n) {
+  // format number 1000000 to 1,234,567
+  return n.replace(/\D/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+}
+
+
+function formatCurrency(input, blur) {
+  // appends $ to value, validates decimal side
+  // and puts cursor back in right position.
+  
+  // get input value
+  var input_val = input.val();
+  
+  // don't validate empty input
+  if (input_val === "") { return; }
+  
+  // original length
+  var original_len = input_val.length;
+
+  // initial caret position 
+  var caret_pos = input.prop("selectionStart");
+    
+  // check for decimal
+  if (input_val.indexOf(".") >= 0) {
+
+    // get position of first decimal
+    // this prevents multiple decimals from
+    // being entered
+    var decimal_pos = input_val.indexOf(".");
+
+    // split number by decimal point
+    var left_side = input_val.substring(0, decimal_pos);
+    var right_side = input_val.substring(decimal_pos);
+
+    // add commas to left side of number
+    left_side = formatNumber(left_side);
+
+    // validate right side
+    right_side = formatNumber(right_side);
+    
+    // On blur make sure 2 numbers after decimal
+    if (blur === "blur") {
+      right_side += "00";
+    }
+    
+    // Limit decimal to only 2 digits
+    right_side = right_side.substring(0, 2);
+
+    // join number by .
+    input_val = left_side + "." + right_side;
+
+  } else {
+    // no decimal entered
+    // add commas to number
+    // remove all non-digits
+    input_val = formatNumber(input_val);
+    
+    // final formatting
+    if (blur === "blur") {
+      input_val += ".00";
+    }
+  }
+  
+  // send updated string to input
+  input.val(input_val);
+
+  // put caret back in the right position
+  var updated_len = input_val.length;
+  caret_pos = updated_len - original_len + caret_pos;
+  input[0].setSelectionRange(caret_pos, caret_pos);
+}
+
+
+
   }
 };
 </script>

@@ -7,6 +7,7 @@
         color-on-scroll="500"
         style="opacity:50%;"
       >
+        <template v-if="full">
         <div class="container">
           <div class="navbar-translate">
             <a
@@ -19,12 +20,12 @@
               <nuxt-link
                 class="navbar-brand"
                 rel="tooltip"
-                to="/create-tournament"
+                to="/profile"
                 title="Designed by Invision. Coded by Creative Tim"
                 data-placement="bottom"
               >
                 <i class="now-ui-icons business_badge"></i>
-                <p>My Tournament</p>
+                <p>Profile</p>
               </nuxt-link>
               <nuxt-link
                 class="navbar-brand"
@@ -91,6 +92,7 @@
             </template>
           </div>
         </div>
+        </template>
       </nav>
       <!-- End Navbar -->
       <div class="wrapper">
@@ -156,6 +158,11 @@
 
 <script>
 export default {
+  data(){
+    return{
+      full: true
+    }
+  },
   methods: {
     async logout() {
       await this.$auth.logout();
@@ -186,6 +193,15 @@ export default {
     //   nowuiKit.checkScrollForTransparentNavbar();
     //   $(window).on("scroll", nowuiKit.checkScrollForTransparentNavbar);
     // }
+  },
+  created(){
+    if(this.user != null && this.user.id != 1){
+      if(_.chain(this.user).values().reject('email_verified_at').includes(null).value()){
+
+        this.full = false;
+        this.$router.push('/profile')
+      }
+    }
   }
 };
 </script>

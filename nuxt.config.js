@@ -51,6 +51,7 @@ export default {
     { src: '~/plugins/jquery.bracket.min.js', ssr: false },
     { src: '~/plugins/vue-select', ssr: false },
     { src: '~/plugins/imageupload.js', ssr: false },
+    { src: '~/plugins/datepicker.js', ssr: false },
     { src: '~/plugins/ckeditor.js', ssr: false }
   ],
 

@@ -56,7 +56,7 @@
               <div class="card-body px-0" style="overflow-y:auto; max-height:400px;">
                 <template v-if="byMonth || byMonth == []">
                   <template v-for="comp in byMonth">
-                    <div class="card-body border-bottom px-0">
+                    <div class="card-body border-bottom px-0" :key="comp.id">
                       <div class="col-md-12 p-0">
                         <div class="row px-4">
                           <div class="col-md">
@@ -78,7 +78,7 @@
                             </div>
                           </div>
                           <div class="col-md-2 order-first p-0">
-                            <img src="#">
+                            <img :src="storageApi+comp.competitionUploads[1].url">
                           </div>
                         </div>
                       </div>
@@ -131,7 +131,7 @@
                 <div class="tab-content" style="overflow-y:auto; max-height:400px;">
                   <div class="tab-pane active" id="nasional" role="tabpanel">
                     <template v-for="comp in competitions">
-                      <div class="card-body px-0 border-bottom align-self">
+                      <div class="card-body px-0 border-bottom align-self" :key="comp.id">
                         <div class="col-md-12 p-0">
                           <div class="row px-4">
                             <div class="col-md">
@@ -144,7 +144,7 @@
                                     class="btn-sm btn-secondary"
                                     :to="'competition/'+ comp.id"
                                   >Detail</nuxt-link>
-                                  <nuxt-link class="btn-sm btn-secondary" to="#">Register</nuxt-link>
+                                  <!-- <nuxt-link class="btn-sm btn-secondary" to="#">Register</nuxt-link> -->
                                 </div>
                                 <div
                                   class="ml-auto text-secondary"
@@ -153,7 +153,7 @@
                               </div>
                             </div>
                             <div class="col-md-2 order-first p-0">
-                              <img src="#">
+                              <img :src="storageApi+comp.competitionUploads[1].url">
                             </div>
                           </div>
                         </div>
@@ -163,7 +163,7 @@
                   <template v-if="user != null">
                     <div class="tab-pane" id="province" role="tabpanel">
                       <template v-for="comp in byProvince">
-                        <div class="card-body px-0 border-bottom align-self">
+                        <div class="card-body px-0 border-bottom align-self" :key="comp.id">
                           <div class="col-md-12 p-0">
                             <div class="row px-4">
                               <div class="col-md">
@@ -176,7 +176,7 @@
                                       class="btn-sm btn-secondary"
                                       :to="'competition/'+ comp.id"
                                     >Detail</nuxt-link>
-                                    <nuxt-link class="btn-sm btn-secondary" to="#">Register</nuxt-link>
+                                    <!-- <nuxt-link class="btn-sm btn-secondary" to="#">Register</nuxt-link> -->
                                   </div>
                                   <div
                                     class="ml-auto text-secondary"
@@ -185,7 +185,7 @@
                                 </div>
                               </div>
                               <div class="col-md-2 order-first p-0">
-                                <img src="#">
+                                <img :src="storageApi+comp.competitionUploads[1].url">
                               </div>
                             </div>
                           </div>
@@ -233,17 +233,18 @@ export default {
     if (store.$auth.$state.user) {
       id = store.$auth.$state.user.id;
       byProvince = await app.$axios
-      .get("/competitions?load=createdBy,city&notCreatedBy=" + id, {
+      .get("/competitions?load=competitionUploads,createdBy,city&notCreatedBy=" + id, {
         params: { province: store.$auth.$state.user.city.province, status: "Confirmed" }
       })
     }
     let competitions = await app.$axios
-      .get("/competitions?load=createdBy,city&notCreatedBy=" + id, {
+      .get("/competitions?load=competitionUploads,createdBy,city&notCreatedBy=" + id, {
         params: { status: "Confirmed" }
       })
     return {competitions: competitions.data.data, byProvince: byProvince.data.data}
   },
   created() {
+    
   },
   layout: "portal"
 };
