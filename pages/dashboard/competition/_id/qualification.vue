@@ -157,7 +157,7 @@ export default {
       if(typeof str != 'number'){
         if(str.toLowerCase()=="m")
           this.angka[j]=0;
-       else if(str.toLowerCase()=="x")
+        else if(str.toLowerCase()=="x")
           this.angka[j]=10;
         else
           this.angka[j]=parseInt(str)

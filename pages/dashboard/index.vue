@@ -25,7 +25,7 @@
                 :to="{path:'/dashboard/competition/'+comp.id}"
               >Detail</nuxt-link>
             </template>
-            <template v-else>
+            <template v-else> 
               <button
                 @click="getCompetition(comp)"
                 class="btn-sm btn-success"
