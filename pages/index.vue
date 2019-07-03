@@ -153,7 +153,7 @@
                               </div>
                             </div>
                             <div class="col-md-2 order-first p-0">
-                              <img :src="storageApi+comp.competitionUploads[1].url">
+                              <img :src="(comp.competitionUploads[1] == undefined)?'#':storageApi+comp.competitionUploads[1].url">
                             </div>
                           </div>
                         </div>

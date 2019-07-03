@@ -3,11 +3,11 @@
   <body class="hold-transition sidebar-mini">
     <div class="wrapper">
       <!-- Navbar -->
-      <navbar/>
+      <navbar />
       <!-- /.navbar -->
 
       <!-- Main Sidebar Container -->
-      <sidebar/>
+      <sidebar />
 
       <!-- Content Wrapper. Contains page content -->
       <div class="content-wrapper">
@@ -38,7 +38,7 @@
         <!-- Main content -->
         <div class="content">
           <div class="container-fluid">
-            <nuxt/>
+            <nuxt />
           </div>
           <!-- /.container-fluid -->
         </div>
@@ -49,12 +49,12 @@
       <!-- Control Sidebar -->
       <aside class="control-sidebar control-sidebar-dark">
         <!-- Control sidebar content goes here -->
-        <rightSideBar/>
+        <rightSideBar />
       </aside>
       <!-- /.control-sidebar -->
 
       <!-- Main Footer -->
-      <Footer/>
+      <Footer />
     </div>
     <!-- ./wrapper -->
 
@@ -71,9 +71,18 @@ import rightSideBar from "~/components/sidebar/rightSideBar.vue";
 import navbar from "~/components/navbar/navbar.vue";
 import Footer from "~/components/footer.vue";
 export default {
+  data(){
+    return{
+      gg: null
+    }
+  },
   head: {
     link: [
-      { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700' },
+      {
+        rel: "stylesheet",
+        href:
+          "https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700"
+      },
       { rel: "stylesheet", href: "/css/bootstrap-vue.min.css" },
       { rel: "stylesheet", href: "/css/adminlte.min.css" }
     ]
@@ -84,9 +93,20 @@ export default {
     Footer,
     rightSideBar
   },
-  mounted(){
-    if(!this.loggedIn)
-      this.$router.push({name: 'login'})
+  mounted() {
+    },
+  beforeCreate() {
+    if (!this.$auth.$storage.state.loggedIn) return this.$router.push({ name: "login" });
+
+    if (this.$route.name.includes("dashboard-competition-")) {
+      this.$axios
+        .get("/competitions/" + this.$route.params.id, {
+          params: { createdBy:this.$auth.$storage.state.user.id, findScorer: this.$auth.$storage.state.user.id }
+        })
+        .catch(e => {
+          return this.$router.push("/");
+        });
+    }
   }
 };
 </script>

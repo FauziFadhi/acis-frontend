@@ -1,68 +1,48 @@
 <template>
-  <div class="row">
-    <div class="col-md-7">
-      <div class="card card-primary" style="overflow:hidden;">
-        <div class="card-header">
-          <h3 class="card-title">Bracket Elimination</h3>
-        </div>
-        <div class="card-body overflow-auto" style="height: 720px">
-          <div id="big" class="align-middle">
+  <div class="card card-danger" style="overflow:hidden;">
+    <div class="card-header d-flex p-0 d-block">
+      <ul class="nav nav-pills ml-auto p-2">
+        <li
+          class="nav-item"
+          v-for="(details,index) in competition.competitionDetails"
+          :key="details.category.id"
+        >
+          <a
+            class="nav-link"
+            @click="getBracket(details.id)"
+            :class="index==0?'active':''"
+            :href="'#tab_'+index"
+            data-toggle="tab"
+          >{{details.category.name}}</a>
+        </li>
+      </ul>
+    </div>
+    <div class="card-body overflow-auto" style="height: 720px">
+      <!-- Tab panes -->
+      <!-- TODO: dont forget to change id title and body -->
+      <div class="tab-content text-center">
+        <div
+          class="tab-pane"
+          :id="'tab_'+index"
+          v-for="(detail,index) in competition.competitionDetails"
+          :key="detail.id"
+          role="tabpanel"
+          :class="index==0?'active show':''"
+        >
+          <div :id="'big'+(detail.id)" class="align-middle">
             <div class="demo"></div>
           </div>
         </div>
       </div>
     </div>
-    <div class="col-md-5">
-      <div class="card card-primary">
-        <div class="card-header">
-          <h3 class="card-title">Top 3 Elimination</h3>
-        </div>
-        <div class="card-body overflow-auto" style="height 500px;">
-          <table class="table table-condensed">
-            <tbody>
-              <tr>
-                <th style="width: 10px">#</th>
-                <th>Task</th>
-                <th>Progress</th>
-                <th style="width: 40px">Label</th>
-              </tr>
-              <tr>
-                <td>a</td>
-                <td>s</td>
-                <td>d</td>
-                <td>d</td>
-              </tr>
-              <tr>
-                <td>a</td>
-                <td>s</td>
-                <td>d</td>
-                <td>d</td>
-              </tr>
-              <tr>
-                <td>a</td>
-                <td>s</td>
-                <td>d</td>
-                <td>d</td>
-              </tr>
-            </tbody>
-            <tr></tr>
-          </table>
-          <button
-            id="matchCallback"
-            hidden
-            data-target="#eliminationScore"
-            data-toggle="modal"
-          >asdsd</button>
-        </div>
-      </div>
-    </div>
-    <dashboardModal :idModal="'eliminationScore'" :title="'Qualification Score'">
+    <button id="matchCallback" hidden data-target="#eliminationScore" data-toggle="modal">asdsd</button>
+    <dashboardModal ref="eliminationScore" :idModal="'eliminationScore'" :title="'Qualification Score'">
       <template v-slot:default>
         <div class="col-md-12">
           <div class="row">
             <div class="col-md-6 px-0">
               <div class="col-md px-0 text-center">
-                <h6>{{match.participant_1.user.name}}</h6>
+                <!-- <h6>{{match.participant_1.user.name}}</h6> -->
               </div>
               <div class="col-md px-0 text-center">
                 <h3>{{getTotalPoint[0]}}</h3>
@@ -95,7 +75,7 @@
                         {{getTotalScore(match.scores[i-1].score_details,'score_1')}}
                         <!-- <button
                           class="btn-sm btn-info"
-                        >Edit</button> -->
+                        >Edit</button>-->
                       </td>
                     </template>
                     <template v-else>
@@ -109,9 +89,7 @@
                           size="2"
                         />
                       </td>
-                      <td>
-                        {{totalRound1[i-1]}}
-                      </td>
+                      <td>{{totalRound1[i-1]}}</td>
                     </template>
                   </tr>
                 </tbody>
@@ -119,7 +97,7 @@
             </div>
             <div class="col-md-6 px-0">
               <div class="col-md px-0 text-center">
-                <h6>{{match.participant_2.user.name}}</h6>
+                <!-- <h6>{{match.participant_2.user.name}}</h6> -->
               </div>
               <div class="col-md px-0 text-center">
                 <h3>{{getTotalPoint[1]}}</h3>
@@ -150,7 +128,7 @@
                         {{getTotalScore(match.scores[i-1].score_details,'score_2')}}
                         <!-- <button
                           class="btn-sm btn-info"
-                        >Edit</button> -->
+                        >Edit</button>-->
                       </td>
                     </template>
                     <template v-else>
@@ -166,7 +144,10 @@
                       </td>
                       <td>
                         {{totalRound2[i-1]}}
-                        <button class="btn-sm py-0 m-0 btn-success" @click="submit(i)">Go</button>
+                        <button
+                          class="btn-sm py-0 m-0 btn-success"
+                          @click="submit(i)"
+                        >Go</button>
                       </td>
                     </template>
                   </tr>
@@ -191,6 +172,7 @@ export default {
   },
   data() {
     return {
+      competition: {},
       match: {
         participant_1: {
           user: {
@@ -233,35 +215,62 @@ export default {
     };
   },
   methods: {
-    submit(round){
+    getBracket(i) {
+      let matchData = {
+        teams: null,
+        results: null
+      };
+      this.$axios
+        .get("/eliminations", { params: { competition_detail_id: i } })
+        .then(resp1 => {
+          matchData = resp1.data;
+          // matchData.results = resp.data.results
+          $("div#big" + i + " .demo").bracket({
+            teamWidth: 200,
+            init: matchData,
+            onMatchClick: this.getMatch
+            // decorator: { edit: edit_fn, render: render_fn }
+          });
+        });
+    },
+    submit(round) {
       let data = {
-        score_1: this.round[round-1].scores1,
-        score_2: this.round[round-1].scores2,
+        score_1: this.round[round - 1].scores1,
+        score_2: this.round[round - 1].scores2,
         round: round
-      }
-      this.$axios.put('eliminations/'+this.match.id,data).then((resp) => {
-        this.$toast.success("berhasil update score")
-      }).catch((e) => {
-        this.$toast.error("Something wrong!!")
-      })
+      };
+      this.$axios
+        .put("eliminations/" + this.match.id, data)
+        .then(resp => {
+          this.$toast.success("berhasil update score");
+        })
+        .catch(e => {
+          this.$toast.error("Something wrong!!");
+        });
     },
     getTotalScore(data, prop) {
-      return _.sumBy(data, function(o){
-        if(o[prop] == "m"){
-          return 0
-        }else if(o[prop] == "x" )
-          return 10
-        else
-          return parseInt(o[prop])
+      return _.sumBy(data, function(o) {
+        if (o[prop] == "m") {
+          return 0;
+        } else if (o[prop] == "x") return 10;
+        else return parseInt(o[prop]);
       });
     },
     getMatch(data) {
+      let d = new Date()
+      if(d<new Date(this.competition.start_date) || d> new Date(this.competition.end_date)){
+        
+        return this.$toast.error("cant update score for now")
+      }
       $("#matchCallback").click();
+      // $(".match").on('click',function(event){
+      //   alert($(this).children(".teamContainer .team .label").text())
+      // })
       this.match = data.match;
     },
     score(i, j) {
       let str1 = this.round[i].scores1[j];
-      if (typeof str1 != "number" || str1!=null) {
+      if (typeof str1 != "number" || str1 != null) {
         if (str1.toLowerCase() == "m") this.angka1[j] = 0;
         else if (str1.toLowerCase() == "x") this.angka1[j] = 10;
         else this.angka1[j] = parseInt(str1);
@@ -269,19 +278,10 @@ export default {
         this.angka1[j] = parseInt(str1, 10);
       }
       this.totalRound1[i] = _.sum(this.angka1);
-      
-      // if (typeof str2 != "number" || str2!=[]) {
-      //   if (str2.toLowerCase() == "m") this.angka2[j] = 0;
-      //   else if (str2.toLowerCase() == "x") this.angka2[j] = 10;
-      //   else this.angka2[j] = parseInt(str2);
-      // } else {
-      //   this.angka2[j] = parseInt(str2, 10);
-      // }
-      // this.totalRound2[i] = _.sum(this.angka2);
     },
     score2(i, j) {
       let str2 = this.round[i].scores2[j];
-      if (typeof str2 != "number" || str2!=null) {
+      if (typeof str2 != "number" || str2 != null) {
         if (str2.toLowerCase() == "m") this.angka2[j] = 0;
         else if (str2.toLowerCase() == "x") this.angka2[j] = 10;
         else this.angka2[j] = parseInt(str2);
@@ -306,17 +306,35 @@ export default {
     };
 
     this.$axios
-      .get("/eliminations", { params: { competition_detail_id: 1 } })
+      .get("/competitions/" + this.$route.params.id, {
+        params: {
+          load: "competitionDetails.category,competitionDetails.participants"
+        }
+      })
       .then(resp => {
-        matchData = resp.data;
-        // matchData.results = resp.data.results
-        $("div#big .demo").bracket({
-          teamWidth: 200,
-          init: matchData,
-          onMatchClick: this.getMatch
+        this.competition = resp.data.data;
+        this.$axios
+          .get("/eliminations", {
+            params: {
+              competition_detail_id: this.competition.competitionDetails[0].id
+            }
+          })
+          .then(resp1 => {
+            matchData = resp1.data;
+            // matchData.results = resp.data.results
+            $(
+              "div#big" + this.competition.competitionDetails[0].id + " .demo"
+            ).bracket({
+              teamWidth: 200,
+              init: matchData,
+              onMatchClick: this.getMatch
 
-          // decorator: { edit: edit_fn, render: render_fn }
-        });
+              // decorator: { edit: edit_fn, render: render_fn }
+            });
+          });
+      })
+      .catch(e => {
+        // this.$router.push('/404')
       });
 
     function edit_fn(container, data, doneCb) {}
@@ -330,7 +348,8 @@ export default {
     //       return;
     //   }
     // }
-  }
+  },
+  created() {}
 };
 </script>
 

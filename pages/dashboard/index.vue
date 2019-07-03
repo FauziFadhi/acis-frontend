@@ -60,6 +60,18 @@
           </div>
           <div class="col-md-12 px-0">
             <div class="form-group">
+              <span>Registration | Payment</span>:
+              <span class="font-weight-bold">{{competition.registration_due_date}} | {{competition.payment_due_date}}</span>
+            </div>
+          </div>
+          <div class="col-md-12 px-0">
+            <div class="form-group">
+              <span>Price</span>:
+              <span class="font-weight-bold">{{competition.price}}</span>
+            </div>
+          </div>
+          <div class="col-md-12 px-0">
+            <div class="form-group">
               <span>Address</span>:
               <span class="font-weight-bold">{{competition.address}}</span>
             </div>
@@ -88,13 +100,13 @@
                 <tr v-for="detail in competition.competitionDetails" :key="detail.id">
                   <td>{{detail.category.name}}</td>
                   <td>{{detail.quota}}</td>
-                </tr>
+                </tr>`
               </tbody>
             </table>
           </div>
           <div class="col-md-12 justify-content-center px-0">
             <table class="table table-stripped table-bordered">
-              <thead>
+              <thead>`
                 <tr>
                   <th>Document</th>
                   <th>Url</th>

@@ -56,10 +56,15 @@
               </tr>
             </tbody>
           </table>
+          <div class="form-group">
+          <span>Generate Bracket:</span>
+          <input v-model="generate.size" maxlength="3" placeholder="Size Bracket">
+          <button @click="generateBracket(detail.id)" class="btn-sm btn-danger">Generate</button>
+        </div>
         </div>
       </div>
     </div>
-    <dashboardModal :idModal="'qualificationScore'" :title="'Qualification Score'">
+    <dashboardModal ref="qualificationScore" :idModal="'qualificationScore'" :title="'Qualification Score'">
       <template v-slot:default v-if="participant != {} || participant != null">
         <div class="form-group">
           <span>Participant Name:</span>
@@ -91,6 +96,7 @@
               </td>
               <td>{{totalRound[i-1]}} <button class="btn-sm btn-success" @click="submit(i)">Go</button></td>
               </template>
+    
             </tr>
           </tbody>
         </table>
@@ -110,6 +116,10 @@ export default {
   },
   data() {
     return {
+      generate: {
+        competition_detail_id: null,
+        size: null
+      },
       round:[{
         scores: []
       },
@@ -138,6 +148,14 @@ export default {
     };
   },
   methods: {
+    generateBracket(detailId){
+      this.generate.competition_detail_id = detailId;
+      this.$axios.get('/generate-bracket',{params: {competition_detail_id: this.generate.competition_detail_id, size: this.generate.size}}).then((resp) => {
+        this.$axios.post('/eliminations',resp.data).then((resp)=>{
+          this.$toast('success generate elimination bracket');
+        })
+      })
+    },
     submit(ronde){
       let scores = this.round[ronde-1].scores
       let qualification = {
@@ -172,6 +190,12 @@ export default {
       return _.filter(detail.participants, { status: "Confirmed" })
     },
     openQualificationModal(id) {
+      let d = new Date()
+      if(d<new Date(this.competition.start_date) || d> new Date(this.competition.end_date)){
+        this.$refs.qualificationScore.$el.id = "gg";
+        
+        return this.$toast.error("cant update score for now")
+      }
       this.participant = id;
       this.round = [{
         scores: []
