@@ -67,7 +67,7 @@ export default {
   ],
 
   axios: {
-    baseURL: 'http://localhost:8000/api'
+    baseURL: 'https://acis-backend.herokuapp.com/api'
   },
 
   auth: {
