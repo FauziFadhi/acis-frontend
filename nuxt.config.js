@@ -24,6 +24,7 @@ export default {
     ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+      { rel: 'manifest', href: '/manifest.json' }
     ]
   },
 
@@ -63,11 +64,12 @@ export default {
     'bootstrap-vue/nuxt',
     '@nuxtjs/axios',
     '@nuxtjs/auth',
+    '@nuxtjs/pwa',
     '@nuxtjs/toast'
   ],
 
   axios: {
-    baseURL: 'http://localhost:8000/api'
+    baseURL: 'https://acis-backend.herokuapp.com/api'
   },
 
   auth: {
