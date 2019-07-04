@@ -24,6 +24,7 @@ export default {
     ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+      { rel: 'manifest', href: '/manifest.json' }
     ]
   },
 
@@ -63,6 +64,7 @@ export default {
     'bootstrap-vue/nuxt',
     '@nuxtjs/axios',
     '@nuxtjs/auth',
+    '@nuxtjs/pwa',
     '@nuxtjs/toast'
   ],
 
