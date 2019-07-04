@@ -228,7 +228,6 @@
 <script>
 import daterangepicker from "daterangepicker";
 import moment from "moment-timezone";
-import axios from "axios";
 export default {
   data() {
     return {
@@ -260,7 +259,7 @@ export default {
       this.imagesUpload.push(formData.get("file"));
 
       // Upload image api
-      // axios.post('http://your-url-upload', formData).then(response => {
+      // this.$axios.post('http://your-url-upload', formData).then(response => {
       //   console.log(response)
       // })
     },
@@ -325,7 +324,7 @@ export default {
           this.imagesUpload[i]
         );
       }
-      axios
+      this.$axios
         .post("/competitions", data, {
           headers: {
             "Content-Type": "multipart/form-data",
@@ -364,7 +363,7 @@ export default {
     $(function() {
       $("#reservation").daterangepicker({minDate: new Date()});
     });
-    axios.get("/categories").then(resp => {
+    this.$axios.get("/categories").then(resp => {
       this.categories = resp.data.data;
     });
     // Jquery Dependency
