@@ -156,7 +156,9 @@ export default {
   },
   methods:{
     getCompetition(competition){
-      this.competition = competition;
+      this.$axios.get('/competitions/'+competition.id,{params:{load: "city,competitionDetails.category,competitionUploads,createdBy"}}).then((resp)=> {
+        this.competition = resp.data.data;
+      })
     },
     competitionValidate(boolean){
       let data = {};
@@ -188,7 +190,7 @@ export default {
         .get("/competitions", {
           params: {
             load:
-              "city,competitionDetails.category,competitionUploads,createdBy",
+              "city",
               orderByDate: 'desc'
           }
         })
