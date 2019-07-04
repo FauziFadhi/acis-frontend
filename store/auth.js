@@ -12,6 +12,6 @@ export const getters = {
 
 export const state = () =>({
     user: null,
-    storageApi: 'http://localhost:8000/storage/',
+    storageApi: 'https://acis-backend.herokuapp.com/api/storage/',
     loggedIn: false
 })

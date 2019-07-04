@@ -326,7 +326,7 @@ export default {
         );
       }
       axios
-        .post("http://localhost:8000/api/competitions", data, {
+        .post("/competitions", data, {
           headers: {
             "Content-Type": "multipart/form-data",
             Authorization: this.$auth.$storage._state["_token.local"]
@@ -364,7 +364,7 @@ export default {
     $(function() {
       $("#reservation").daterangepicker({minDate: new Date()});
     });
-    axios.get("http://localhost:8000/api/categories").then(resp => {
+    axios.get("/categories").then(resp => {
       this.categories = resp.data.data;
     });
     // Jquery Dependency
