@@ -27,7 +27,7 @@
             </template>
             <template v-else> 
               <button
-                @click="getCompetition(comp)"
+                @click="getCompetition(comp.id)"
                 class="btn-sm btn-success"
                 data-target="#validateCompetition"
                 data-toggle="modal"
@@ -155,8 +155,12 @@ export default {
     }
   },
   methods:{
-    getCompetition(competition){
-      this.competition = competition;
+    getCompetition(id){
+      this.competition = [];
+      this.$axios.get('/competitions'+id,{params:{load: "competitionDetails.category,competitionUploads,createdBy"}}).then((resp) =>{
+
+        this.competition = resp.data.data;
+      })
     },
     competitionValidate(boolean){
       let data = {};
@@ -177,7 +181,7 @@ export default {
   async created() {
     if (this.user.id != 1) {
       this.$axios
-        .get("/competitions/", {
+        .get("/competitions", {
           params: { createdBy: this.user.id, load: "city" }
         })
         .then(resp => {
@@ -185,10 +189,10 @@ export default {
         });
     } else {
       this.$axios
-        .get("/competitions/", {
+        .get("/competitions", {
           params: {
             load:
-              "city,competitionDetails.category,competitionUploads,createdBy",
+              "city",
               orderByDate: 'desc'
           }
         })
