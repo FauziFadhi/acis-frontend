@@ -27,7 +27,7 @@
             </template>
             <template v-else> 
               <button
-                @click="getCompetition(comp)"
+                @click="getCompetition(comp.id)"
                 class="btn-sm btn-success"
                 data-target="#validateCompetition"
                 data-toggle="modal"
@@ -155,8 +155,8 @@ export default {
     }
   },
   methods:{
-    getCompetition(competition){
-      this.$axios.get('/competitions/'+competition.id,{params:{load: "city,competitionDetails.category,competitionUploads,createdBy"}}).then((resp)=> {
+    getCompetition(id){
+      this.$axios.get('/competitions/'+id,{params:{load: "city,competitionDetails.category,competitionUploads,createdBy"}}).then((resp)=> {
         this.competition = resp.data.data;
       })
     },
