@@ -177,7 +177,7 @@ export default {
   async created() {
     if (this.user.id != 1) {
       this.$axios
-        .get("/competitions/", {
+        .get("/competitions", {
           params: { createdBy: this.user.id, load: "city" }
         })
         .then(resp => {
@@ -185,7 +185,7 @@ export default {
         });
     } else {
       this.$axios
-        .get("/competitions/", {
+        .get("/competitions", {
           params: {
             load:
               "city,competitionDetails.category,competitionUploads,createdBy",
