@@ -4,15 +4,15 @@
       <div class="container">
         <div class="row justify-content-center">
           <div class="col-md-10 col-lg-10 col-xl-10 ml-auto mr-auto">
-            <div class="row px-4">
-              <div class="mr-auto">
+            <div class="row px-3">
+              <div class="col-md-6">
                 <p class="category">
                   {{competition.name}}
                   <button
                     @click="validateLoggedIn"
                     data-target="#register"
                     data-toggle="modal"
-                    class="btn-lg btn-success text-white"
+                    class="btn-md btn-success text-white"
                   >Register</button>
                   <br>
                   <span class="text-danger ml-3">
@@ -21,15 +21,16 @@
                   </span>
                 </p>
               </div>
-                <p>
+              <div class="col-md-6 px-0">
+                <p class="pull-right px-0">
                   <!-- <span class="font-weight-bold">Payment Status:</span> -->
                   <span class="font-weight-bold">Payment Upload:</span>
-                  <span>&nbsp; &nbsp;</span>
+                  <span class="mr-auto">&nbsp; &nbsp;</span>
                   <button
                     data-target="#paymentReceipt"
                     data-toggle="modal"
                     @click="validateLoggedIn"
-                    class="btn-lg btn-info"
+                    class="btn-md btn-info ml-auto"
                   >Upload</button>
                   <br>
                   <span class="text-danger font-weight-bold ml-3">
@@ -38,6 +39,7 @@
                   </span>
                   <br>
                 </p>
+              </div>
             </div>
           </div>
         </div>
@@ -171,7 +173,7 @@
                   :key="detail.id"
                 >
                   <a
-                    class="nav-link text-black-50"
+                    class="nav-link text-black-50 text-truncate"
                     :class="index==0?'active show':''"
                     data-toggle="tab"
                     :href="'#qualification_'+index"
@@ -271,6 +273,8 @@
       :title="'Payment Receipt Upload'"
       :bClick="upload"
       :bTitle="'Upload'"
+      ref="paymentReceiptModal"
+
     >
       <div class="form-group">
         <span>Participant Name and Category</span>
@@ -390,7 +394,7 @@ export default {
           this.$router.push("/login");
         }, 500);
         this.$refs.registerModal.$el.id = "gg";
-        this.$refs.paymentReceipt.$el.id = "gg";
+        this.$refs.paymentReceiptModal.$el.id = "gg";
         this.$toast.error("you have to logged in first");
       }
     },
