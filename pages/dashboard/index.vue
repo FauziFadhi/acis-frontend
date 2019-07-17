@@ -1,6 +1,6 @@
 <template>
   <div>
-    <table class="table table-striped">
+    <table class="table table-striped table-responsive-md">
       <thead>
         <tr>
           <th>No</th>
@@ -37,7 +37,7 @@
         </tr>
       </tbody>
     </table>
-    <dashboardModal :idModal="'validateCompetition'" :title="'Validate Competition'">
+    <dashboardModal :idModal="'validateCompetition'" ref="validateCompetition" :title="'Validate Competition'">
       <template v-slot:default>
         <div class="col-md-12 px-0">
           <div class="col-md-12 px-0">
@@ -123,8 +123,8 @@
         </div>
       </template>
       <template v-slot:footer>
-        <button type="button" class="btn btn-success" @click="competitionValidate(true)">Accept</button>
-        <button type="button" class="btn-sm btn-danger" @click="competitionValidate(false)">Reject</button>
+        <button type="button" class="btn btn-success" data-dismiss="modal" @click="competitionValidate(true)">Accept</button>
+        <button type="button" class="btn-sm btn-danger" data-dismiss="modal" @click="competitionValidate(false)">Reject</button>
       </template>
     </dashboardModal>
   </div>
@@ -140,7 +140,9 @@ export default {
     return {
       competitions: [],
       competition: {
-        city:{},
+        city:{
+          province:null
+        },
         competitionDetails: [
           {category:{}}
         ],
@@ -156,8 +158,7 @@ export default {
   },
   methods:{
     getCompetition(id){
-      this.competition = [];
-      this.$axios.get('/competitions'+id,{params:{load: "competitionDetails.category,competitionUploads,createdBy"}}).then((resp) =>{
+      this.$axios.get('/competitions/'+id,{params:{load: "city,competitionDetails.category,competitionUploads,createdBy"}}).then((resp) =>{
 
         this.competition = resp.data.data;
       })
@@ -176,9 +177,24 @@ export default {
         console.log(e.response.data.errors)
       }
       )
+      console.log(this.$refs.validateCompetition)
+      setInterval(() => {
+        
+        this.$axios
+          .get("/competitions", {
+            params: {
+              load:
+                "city",
+                orderByDate: 'desc'
+            }
+          })
+          .then(resp => {
+            this.competitions = resp.data.data;
+          });
+      }, 2000);
     }
   },
-  async created() {
+  created() {
     if (this.user.id != 1) {
       this.$axios
         .get("/competitions", {
