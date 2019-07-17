@@ -29,7 +29,7 @@
           role="tabpanel"
           :class="index==0?'active show':''"
         >
-          <table class="table-striped table">
+          <table class="table-striped table table-responsive">
             <thead>
               <tr>
                 <th>No</th>
@@ -70,7 +70,7 @@
           <span>Participant Name:</span>
           <span class="font-weight-bold">{{participant.user.name}}</span>
         </div>
-        <table class="table table-stripped table-bordered">
+        <table class="table table-stripped table-bordered table-responsive">
           <thead>
             <tr>
               <td rowspan="2" class="align-middle">Round</td>

@@ -23,7 +23,7 @@
             </b-form-group>
           </div>
           <div class="col-md-6">
-            <table class="table table-striped table-bordered">
+            <table class="table table-striped table-responsive table-bordered">
               <thead>
                 <tr>
                   <th>Name</th>

@@ -31,7 +31,7 @@
               :key="details.category.id"
             >
               <div class="overflow-auto" style="height: 600px; overflow:hidden;">
-                <table class="table table-condensed table-stripped">
+                <table class="table table-condensed table-stripped table-responsive">
                   <tbody>
                     <tr>
                       <th style="width: 40px">#</th>
@@ -91,7 +91,7 @@
               </a>
             </div>
             <div class="col-md-8">
-              <table class="table-stripped table">
+              <table class="table-stripped table table-responsive">
                 <thead>
                   <tr>
                     <th>#</th>

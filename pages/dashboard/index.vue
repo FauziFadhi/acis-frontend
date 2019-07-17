@@ -89,7 +89,7 @@
             </div>
           </div>
           <div class="col-md-12 justify-content-center px-0">
-            <table class="table table-stripped table-bordered">
+            <table class="table table-stripped table-bordered table-responsive">
               <thead>
                 <tr>
                   <th>Category Name</th>
@@ -105,7 +105,7 @@
             </table>
           </div>
           <div class="col-md-12 justify-content-center px-0">
-            <table class="table table-stripped table-bordered">
+            <table class="table table-stripped table-bordered table-responsive">
               <thead>`
                 <tr>
                   <th>Document</th>

@@ -80,7 +80,7 @@
             <br>
             <b-form-group class="mb-0">
               <div>
-                <table class="table table-condensed mb-0">
+                <table class="table table-condensed table-responsive mb-0">
                   <thead class="d-block">
                     <tr>
                       <th style="width:90%;">Category</th>

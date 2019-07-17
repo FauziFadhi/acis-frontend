@@ -191,7 +191,7 @@
                     role="tabpanel"
                     :class="index==0?'active show':''"
                   >
-                    <table class="table-striped table">
+                    <table class="table-striped table table-responsive">
                       <thead>
                         <tr>
                           <th>Rank</th>
@@ -289,7 +289,7 @@
         </select>
       </div>
       <div class="form-group">
-        <table class="table table-stripped">
+        <table class="table table-stripped table-responsive">
           <thead>
             <tr>
               <td>Name</td>
@@ -390,6 +390,7 @@ export default {
           this.$router.push("/login");
         }, 500);
         this.$refs.registerModal.$el.id = "gg";
+        this.$refs.paymentReceipt.$el.id = "gg";
         this.$toast.error("you have to logged in first");
       }
     },
