@@ -47,7 +47,7 @@
               <div class="col-md px-0 text-center">
                 <h3>{{getTotalPoint[0]}}</h3>
               </div>
-              <table class="table-striped table table-responsive">
+              <table class="table-striped table table-responsive-md">
                 <thead>
                   <tr>
                     <th rowspan="2" class="align-middle">Round</th>
@@ -102,7 +102,7 @@
               <div class="col-md px-0 text-center">
                 <h3>{{getTotalPoint[1]}}</h3>
               </div>
-              <table class="table-striped table table-responsive">
+              <table class="table-striped table table-responsive-md">
                 <thead>
                   <tr>
                     <th colspan="3" class="text-center">Arrow</th>

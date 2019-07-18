@@ -80,7 +80,7 @@
             <br>
             <b-form-group class="mb-0">
               <div>
-                <table class="table table-condensed table-responsive mb-0">
+                <table class="table table-condensed table-responsive-md mb-0">
                   <thead class="d-block">
                     <tr>
                       <th style="width:90%;">Category</th>
@@ -236,16 +236,18 @@ export default {
       },
       indonesia: require("~/static/city_province.json"),
       selected: {
-        area_id:null,
+        area_id: 1,
         price: "",
-        name: null,
-        address: null
+        name: "",
+        address: "",
+        description: "",
+        city_id: ""
       },
       errors: {
-        area_id: null,
+        area_id: "",
         file: []
       },
-      file: null,
+      file: "",
       images: [],
       imagesUpload: [],
       province: null,
@@ -318,7 +320,7 @@ export default {
       data.append("competitionUploads[0][file]", this.file);
 
       for (let i = 0; i < this.imagesUpload.length; i++) {
-        data.append("competitionUploads[" + (i + 1) + "][type]", "pdf");
+        data.append("competitionUploads[" + (i + 1) + "][type]", "photos");
         data.append(
           "competitionUploads[" + (i + 1) + "][file]",
           this.imagesUpload[i]

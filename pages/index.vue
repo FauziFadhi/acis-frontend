@@ -78,7 +78,7 @@
                             </div>
                           </div>
                           <div class="col-md-2 order-first p-0">
-                            <img :src="storageApi+comp.competitionUploads[1].url">
+                            <img width="100%" height="170px" :src="storageApi+comp.competitionUploads[1].url">
                           </div>
                         </div>
                       </div>
@@ -108,6 +108,7 @@
                 role="tablist"
                 data-background-color="orange"
               >
+                <input type="text" @input="search" v-model="searchText" placeholder="search" class="mr-auto ml-2 text-black">
                 <li class="nav-item">
                   <a
                     class="nav-link active text-dark"
@@ -153,7 +154,7 @@
                               </div>
                             </div>
                             <div class="col-md-2 order-first p-0">
-                              <img :src="(comp.competitionUploads[1] == undefined)?'#':storageApi+comp.competitionUploads[1].url">
+                              <img width="100%" height="170px" :src="storageApi+comp.competitionUploads[1].url">
                             </div>
                           </div>
                         </div>
@@ -185,7 +186,7 @@
                                 </div>
                               </div>
                               <div class="col-md-2 order-first p-0">
-                                <img :src="storageApi+comp.competitionUploads[1].url">
+                                <img width="100%" height="170px" :src="storageApi+comp.competitionUploads[1].url">
                               </div>
                             </div>
                           </div>
@@ -208,9 +209,10 @@ export default {
   data() {
     return {
       competitions: [],
-      byProvince: [],
+      competitionSearch: [],
       thisMonth: [],
-      test: null
+      test: null,
+      searchText: null
     };
   },
   computed: {
@@ -223,28 +225,47 @@ export default {
         )
           return a;
       });
+    },
+    byProvince() {
+      let user = this.user
+      return _.filter(this.competitions, function(a){
+      return a.city.province == user.city.province
+    })
+    }
+  },
+  created(){
+    this.competitionSearch = this.competitions;
+  },
+  methods:{
+    search(){
+
+      let text = this.searchText;
+      if(this.searchText == "")
+        this.competitions = this.competitionSearch
+
+      else this.competitions = _.filter(this.competitionSearch, function(a){
+          return _.isMatch(a.name,text) || _.isMatch(a.createdBy.name.toLowerCase(),text)
+        })
     }
   },
   async asyncData({ app, store }) {
     let id = 0;
-    let byProvince = {
-      data:{}
-    }
-    if (store.$auth.$state.user) {
-      id = store.$auth.$state.user.id;
-      byProvince = await app.$axios
-      .get("/competitions?load=competitionUploads,createdBy,city&notCreatedBy=" + id, {
-        params: { province: store.$auth.$state.user.city.province, status: "Confirmed" }
-      })
-    }
+    // let byProvince = {
+    //   data:{}
+    // }
+    // if (store.$auth.$state.user) {
+    //   id = store.$auth.$state.user.id;
+    //   byProvince = await app.$axios
+    //   .get("/competitions?load=competitionUploads,createdBy,city&notCreatedBy=" + id, {
+    //     params: { province: store.$auth.$state.user.city.province, status: "Confirmed" }
+    //   })
+    // }
     let competitions = await app.$axios
       .get("/competitions?load=competitionUploads,createdBy,city&notCreatedBy=" + id, {
         params: { status: "Confirmed" }
       })
-    return {competitions: competitions.data.data, byProvince: byProvince.data.data}
-  },
-  created() {
-    
+    return {competitions: competitions.data.data}
+    // , byProvince: byProvince.data.data
   },
   layout: "portal"
 };

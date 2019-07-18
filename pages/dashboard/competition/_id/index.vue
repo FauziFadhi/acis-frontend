@@ -4,7 +4,7 @@
       <Chart v-if="loaded" class="col-md" :height="80" :data="data" :options="options" />
     </div>
     <div class="col-md-12 px-0">
-      <div class="col-md-6">
+      <div class="col-md-4">
         <div class="card">
           <div class="card-body">
             <b-form-group>
@@ -22,23 +22,23 @@
               ></v-select>
             </b-form-group>
           </div>
-          <div class="col-md-6">
-            <table class="table table-striped table-responsive table-bordered">
+          <div class="col-md-12">
+            <table class="table table-striped table-responsive-md table-bordered">
               <thead>
                 <tr>
-                  <th>Name</th>
+                  <th>Name Scorer</th>
                 </tr>
               </thead>
               <tbody>
                 <tr v-for="scorer in scorers" :key="scorer.id">
-                  <td>
+                  <td class="text-truncate">
                     {{scorer.name}}
                     <span class="btn-sm btn-danger" @click="removeName">x</span>
                   </td>
                 </tr>
               </tbody>
             </table>
-            <button @click="updateCompetition">Test</button>
+            <button @click="updateCompetition" class="btn-sm btn-success mb-2">Update</button>
           </div>
         </div>
       </div>

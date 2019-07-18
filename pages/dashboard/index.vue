@@ -89,7 +89,7 @@
             </div>
           </div>
           <div class="col-md-12 justify-content-center px-0">
-            <table class="table table-stripped table-bordered table-responsive">
+            <table class="table table-stripped table-bordered table-responsive-md">
               <thead>
                 <tr>
                   <th>Category Name</th>
@@ -105,7 +105,7 @@
             </table>
           </div>
           <div class="col-md-12 justify-content-center px-0">
-            <table class="table table-stripped table-bordered table-responsive">
+            <table class="table table-stripped table-bordered table-responsive-md">
               <thead>`
                 <tr>
                   <th>Document</th>
@@ -114,7 +114,7 @@
               </thead>
               <tbody>
                 <tr v-for="upload in competition.competitionUploads" :key="upload.id">
-                  <td>Type</td>
+                  <td>{{upload.type}}</td>
                   <td><a :href="storageApi+upload.url">download</a></td>
                 </tr>
               </tbody>
@@ -198,7 +198,7 @@ export default {
     if (this.user.id != 1) {
       this.$axios
         .get("/competitions", {
-          params: { createdBy: this.user.id, load: "city" }
+          params: { createdBy: this.user.id, load: "city", findScorer: this.user.id }
         })
         .then(resp => {
           this.competitions = resp.data.data;

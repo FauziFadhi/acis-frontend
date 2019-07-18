@@ -193,7 +193,7 @@
                     role="tabpanel"
                     :class="index==0?'active show':''"
                   >
-                    <table class="table-striped table table-responsive">
+                    <table class="table-striped table table-responsive-md">
                       <thead>
                         <tr>
                           <th>Rank</th>
@@ -293,7 +293,7 @@
         </select>
       </div>
       <div class="form-group">
-        <table class="table table-stripped table-responsive">
+        <table class="table table-stripped table-responsive-md">
           <thead>
             <tr>
               <td>Name</td>
