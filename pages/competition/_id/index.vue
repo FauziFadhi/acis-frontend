@@ -520,6 +520,19 @@ export default {
     }
   },
   mounted() {
+    this.$axios	
+      .get("/participants", {	
+        params: {	
+          load: "competitionDetail.category",	
+          payment: this.$route.params.id	
+        }	
+      })	
+      .then(resp => {	
+        this.paymentParticipantList= resp.data.data ;	
+      })	
+      .catch(e => {	
+        this.errors.response.data.errors;	
+      });
     let matchData = {
       teams: null,
       results: null
@@ -625,6 +638,21 @@ export default {
         // this.$router.push('/404')
       });
   }
+  // asyncData({ app, params }) {	
+  //   return app.$axios	
+  //     .get("/participants", {	
+  //       params: {	
+  //         load: "competitionDetail.category",	
+  //         payment: params.id	
+  //       }	
+  //     })	
+  //     .then(resp => {	
+  //       return { paymentParticipantList: resp.data.data };	
+  //     })	
+  //     .catch(e => {	
+  //       this.errors.response.data.errors;	
+  //     });	
+  // }
 };
 </script>
 

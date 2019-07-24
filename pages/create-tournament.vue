@@ -311,8 +311,10 @@ export default {
         );
       }
       data.append("name", this.selected.name);
-      data.append("payment_due_date", moment(this.selected.payment_due_date).tz("Asia/Jakarta").format("YYYY/MM/DD"));
-      data.append("registration_due_date", moment(this.selected.registration_due_date).tz("Asia/Jakarta").format("YYYY/MM/DD"));
+      let paymentD = moment(this.selected.registrationDate)
+      let regisD = moment(this.selected.registrationDate)
+      data.append("payment_due_date", paymentD.tz("Asia/Jakarta").format("YYYY/MM/DD"));
+      data.append("registration_due_date", regisD.tz("Asia/Jakarta").format("YYYY/MM/DD"));
       data.append("area_id", this.selected.area_id);
       data.append("description", this.selected.description);
       data.append("city_id", this.selected.city_id);

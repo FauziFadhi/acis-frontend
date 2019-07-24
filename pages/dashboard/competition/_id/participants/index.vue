@@ -43,10 +43,10 @@
                     </tr>
                     <template v-if="details.participants.length!=0">
                       <tr v-for="(participant,i) in details.participants" :key="participant.id">
-                        <td>{{i+1}}</td>
+                        <td class="warning">{{i+1}}</td>
                         <td>{{participant.user.name}}</td>
-                        <td>{{participant.status}}</td>
-                        <td>{{getPaymentLastStatus(participant.paymentReceipts)}}</td>
+                        <td><span :class="participant.status=='Pending'?'bg-warning':'bg-success'" class="p-1">{{participant.status}}</span></td>
+                        <td><span :class="getPaymentLastStatus(participant.paymentReceipts)=='Pending'?'bg-warning':getPaymentLastStatus(participant.paymentReceipts)=='Accepted'?'bg-success':'bg-danger'" class="p-1">{{getPaymentLastStatus(participant.paymentReceipts)}}</span></td>
                         <td>
                           <button
                             class="btn-sm btn-success"
