@@ -69,7 +69,7 @@
                 <span>Phone</span>
               </div>
               <div class="col-md-8">
-                <input type="text" value="user.phone" v-model="selected.phone">
+                <input type="text" onkeypress='return event.charCode >= 48 && event.charCode <= 57' value="user.phone" v-model="selected.phone">
               </div>
             </div>
             <div class="form-group">

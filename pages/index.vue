@@ -69,7 +69,6 @@
                                   class="btn-sm btn-secondary"
                                   :to="'competition/'+ comp.id"
                                 >Detail</nuxt-link>
-                                <nuxt-link class="btn-sm btn-secondary" to="#">Register</nuxt-link>
                               </div>
                               <div
                                 class="ml-auto text-secondary"
@@ -253,13 +252,13 @@ export default {
     // let byProvince = {
     //   data:{}
     // }
-    // if (store.$auth.$state.user) {
-    //   id = store.$auth.$state.user.id;
+    if (store.$auth.$state.user) {
+      id = store.$auth.$state.user.id;
     //   byProvince = await app.$axios
     //   .get("/competitions?load=competitionUploads,createdBy,city&notCreatedBy=" + id, {
     //     params: { province: store.$auth.$state.user.city.province, status: "Confirmed" }
     //   })
-    // }
+    }
     let competitions = await app.$axios
       .get("/competitions?load=competitionUploads,createdBy,city&notCreatedBy=" + id, {
         params: { status: "Confirmed" }

@@ -16,7 +16,7 @@
           <div class="container-fluid">
             <div class="row mb-2">
               <div class="col-sm-6">
-                <h1 class="m-0 text-dark">Starter Page</h1>
+                <!-- <h1 class="m-0 text-dark">Starter Page</h1> -->
               </div>
               <!-- /.col -->
               <div class="col-sm-6">
@@ -24,7 +24,7 @@
                   <li class="breadcrumb-item">
                     <a href="#">Home</a>
                   </li>
-                  <li class="breadcrumb-item active">Starter Page</li>
+                  <!-- <li class="breadcrumb-item active">Starter Page</li> -->
                 </ol>
               </div>
               <!-- /.col -->
@@ -98,15 +98,15 @@ export default {
   beforeCreate() {
     if (!this.$auth.$storage.state.loggedIn) return this.$router.push({ name: "login" });
 
-    if (this.$route.name.includes("dashboard-competition-")) {
-      this.$axios
-        .get("/competitions/" + this.$route.params.id, {
-          params: { createdBy:this.$auth.$storage.state.user.id, findScorer: this.$auth.$storage.state.user.id }
-        })
-        .catch(e => {
-          return this.$router.push("/");
-        });
-    }
+    // if (this.$route.name.includes("dashboard-competition-")) {
+    //   this.$axios
+    //     .get("/competitions/" + this.$route.params.id, {
+    //       params: { createdBy:this.$auth.$storage.state.user.id, findScorer: this.$auth.$storage.state.user.id }
+    //     })
+    //     .catch(e => {
+    //       return this.$router.push("/");
+    //     });
+    // }
   }
 };
 </script>

@@ -14,7 +14,7 @@
                     data-toggle="modal"
                     class="btn-md btn-success text-white"
                   >Register</button>
-                  <br>
+                  <br />
                   <span class="text-danger ml-3">
                     Last date:
                     {{competition.registration_due_date}}
@@ -32,12 +32,12 @@
                     @click="validateLoggedIn"
                     class="btn-md btn-info ml-auto"
                   >Upload</button>
-                  <br>
+                  <br />
                   <span class="text-danger font-weight-bold ml-3">
                     Last date:
                     {{competition.payment_due_date}} / {{price}}
                   </span>
-                  <br>
+                  <br />
                 </p>
               </div>
             </div>
@@ -58,13 +58,13 @@
               <div class="carousel-inner" role="listbox">
                 <!-- image carrousel -->
                 <div class="carousel-item active">
-                  <img class="d-block" src="/archery.jpg" alt="First slide">
+                  <img class="d-block" src="/archery.jpg" alt="First slide" />
                   <div class="carousel-caption d-none d-md-block">
                     <h5>Nature, United States</h5>
                   </div>
                 </div>
                 <div class="carousel-item">
-                  <img class="d-block" src="/login.jpg" alt="Second slide">
+                  <img class="d-block" src="/login.jpg" alt="Second slide" />
                   <div class="carousel-caption d-none d-md-block">
                     <h5>Somewhere Beyond, United States</h5>
                   </div>
@@ -98,7 +98,7 @@
             <p class="category">Quota Participant</p>
             <!-- Nav tabs -->
             <div class="card">
-              <Chart v-if="loaded" class="col-md" :height="80" :data="data" :options="options"/>
+              <Chart v-if="loaded" class="col-md" :height="80" :data="data" :options="options" />
             </div>
           </div>
         </div>
@@ -247,8 +247,9 @@
                 >
                   <a
                     class="nav-link text-black-50"
-                    :class="index==0?'active show':''"
+                    :class="index==0?'active':''"
                     data-toggle="tab"
+                    @click="getBracket(detail.id)"
                     :href="'#elimination_'+index"
                     role="tab"
                   >{{detail.category.name}}</a>
@@ -257,9 +258,18 @@
               <div class="card-body">
                 <!-- Tab panes -->
                 <div class="tab-content text-center">
-                  <!-- <div class="tab-pane" role="tabpanel" :id="'elimination_'+index" :class="index==0?'active show':''">
-                      {{index}}
-                  </div>-->
+                  <div
+                    class="tab-pane"
+                    :id="'elimination_'+index"
+                    v-for="(detail,index) in competition.competitionDetails"
+                    :key="detail.id"
+                    role="tabpanel"
+                    :class="index==0?'active show':''"
+                  >
+                    <div :id="'big'+(detail.id)" class="align-middle">
+                      <div class="demo"></div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -274,7 +284,6 @@
       :bClick="upload"
       :bTitle="'Upload'"
       ref="paymentReceiptModal"
-
     >
       <div class="form-group">
         <span>Participant Name and Category</span>
@@ -317,8 +326,8 @@
         </table>
       </div>
       <div class="form-group">
-        <input type="file" id="file" ref="file" v-on:change="handleFileUpload()">
-        <br>
+        <input type="file" id="file" ref="file" v-on:change="handleFileUpload()" />
+        <br />
         <span v-if="errors.file" class="text-danger">{{errors.file[0]}}</span>
       </div>
     </modal>
@@ -383,11 +392,31 @@ export default {
         }
       }
     },
-    competition: function(val){
-      this.currencyFormatted(val.price)
+    competition: function(val) {
+      this.currencyFormatted(val.price);
     }
   },
   methods: {
+    getBracket(i) {
+      let matchData = {
+        teams: null,
+        results: null
+      };
+      this.$axios
+        .get("/eliminations", { params: { competition_detail_id: i } })
+        .then(resp1 => {
+          matchData = resp1.data;
+          this.bracketData = resp1.data;
+          // matchData.results = resp.data.results
+          $("div#big" + i + " .demo").bracket({
+            teamWidth: 200,
+            init: matchData,
+            onMatchClick: this.getMatch
+            // decorator: { edit: edit_fn, render: render_fn }
+          });
+        })
+        .catch(e => (this.bracketData = {}));
+    },
     validateLoggedIn() {
       if (this.user == null) {
         setTimeout(() => {
@@ -400,9 +429,9 @@ export default {
     },
     upload() {
       let d = new Date();
-
-      if(d> new Date(this.competition.payment_due_date))
-        return this.$toast.error("your payment is late for this tournament")
+      d.setDate(d.getDate() - 1);
+      if (d > new Date(this.competition.payment_due_date))
+        return this.$toast.error("your payment is late for this tournament");
 
       let data = new FormData();
       data.append(
@@ -449,8 +478,10 @@ export default {
       );
     },
     register() {
-      if(new Date() > new Date(this.competition.registration_due_date))
-        return this.$toast.error("you are late to join this tournament")
+      let d = new Date();
+      d.setDate(d.getDate() - 1);
+      if (d > new Date(this.competition.registration_due_date))
+        return this.$toast.error("you are late to join this tournament");
 
       this.$axios
         .post("/participants", {
@@ -461,8 +492,8 @@ export default {
           this.$toast.success("Success to Register Category");
         })
         .catch(e => {
-          if(e.response.status == 401)
-            this.$toast.error(e.response.data.message)
+          if (e.response.status == 401)
+            this.$toast.error(e.response.data.message);
           if (e.response.data.errors.user_id) {
             if (
               e.response.data.errors.user_id[0] ==
@@ -473,11 +504,55 @@ export default {
         });
     },
     currencyFormatted: function(num) {
-      let p = parseInt(num).toFixed(2).split(".");
-    this.price = "Rp" + p[0].split("").reverse().reduce(function(acc, num, i, orig) {
-        return  num=="-" ? acc : num + (i && !(i % 3) ? "," : "") + acc;
-    }, "") + "." + p[1];
+      let p = parseInt(num)
+        .toFixed(2)
+        .split(".");
+      this.price =
+        "Rp" +
+        p[0]
+          .split("")
+          .reverse()
+          .reduce(function(acc, num, i, orig) {
+            return num == "-" ? acc : num + (i && !(i % 3) ? "," : "") + acc;
+          }, "") +
+        "." +
+        p[1];
     }
+  },
+  mounted() {
+    let matchData = {
+      teams: null,
+      results: null
+    };
+    this.$axios
+      .get("/competitions/" + this.$route.params.id, {
+        params: {
+          load: "competitionDetails.category"
+        }
+      })
+      .then(resp => {
+        this.$axios
+          .get("/eliminations", {
+            params: {
+              competition_detail_id: this.competition.competitionDetails[0].id
+            }
+          })
+          .then(resp1 => {
+            matchData = resp1.data;
+            // matchData.results = resp.data.results
+            $(
+              "div#big" + this.competition.competitionDetails[0].id + " .demo"
+            ).bracket({
+              teamWidth: 200,
+              init: matchData
+
+              // decorator: { edit: edit_fn, render: render_fn }
+            });
+          });
+      })
+      .catch(e => {
+        // this.$router.push('/404')
+      });
   },
   data() {
     return {
@@ -548,21 +623,6 @@ export default {
       })
       .catch(e => {
         // this.$router.push('/404')
-      });
-  },
-  asyncData({ app, params }) {
-    return app.$axios
-      .get("/participants", {
-        params: {
-          load: "competitionDetail.category",
-          payment: params.id
-        }
-      })
-      .then(resp => {
-        return { paymentParticipantList: resp.data.data };
-      })
-      .catch(e => {
-        this.errors.response.data.errors;
       });
   }
 };

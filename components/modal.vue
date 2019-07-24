@@ -19,7 +19,7 @@
             <slot></slot>
           </div>
           <div class="modal-footer">
-            <button type="button" @click="bClick" class="btn btn-success">{{bTitle}}</button>
+            <button type="button" @click="bClick" data-dismiss="modal" class="btn btn-success">{{bTitle}}</button>
             <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
           </div>
         </div>

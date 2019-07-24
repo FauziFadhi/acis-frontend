@@ -94,7 +94,9 @@
                       <td style="width: 40px">
                         <input
                           type="text"
+                          onkeypress='return event.charCode >= 48 && event.charCode <= 57'
                           size="1"
+                          width="2"
                           v-model="selected.competitionDetails[index].quota"
                         >
                       </td>

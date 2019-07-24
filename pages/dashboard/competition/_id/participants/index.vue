@@ -30,12 +30,13 @@
               v-for="(details,index) in competition.competitionDetails"
               :key="details.category.id"
             >
+              <nuxt-link :to="{name: 'print-participants',params: {participants:getConfirmed(details.participants),category:details.category.name}}" class="btn ml-auto btn-secondary mb-2">print</nuxt-link>
               <div class="overflow-auto" style="height: 600px; overflow:hidden;">
                 <table class="table table-condensed table-stripped table-responsive-md">
                   <tbody>
                     <tr>
                       <th style="width: 40px">#</th>
-                      <th>Label</th>
+                      <th>Name</th>
                       <th>Status</th>
                       <th>Payment Status</th>
                       <th style="width: 40px">action</th>
@@ -145,7 +146,6 @@
         </div>
       </div>
     </div>
-    {{test}}
   </div>
 </template>
 
@@ -162,7 +162,11 @@ export default {
       }
     };
   },
+  transition: 'test',
   methods: {
+    getConfirmed(participants){
+      return _.filter(participants,{'status':'Confirmed'})
+    },
     validateClick(id) {
       this.participantId = id;
       console.log(this.participantId);
@@ -212,11 +216,6 @@ export default {
         });
     }
   },
-  computed: {
-    test(){
-      console.log("Test")  
-    }
-  },
   async created() {
     let {data} = await this.$axios
       .get("/competitions/" + this.$route.params.id, {
@@ -236,4 +235,10 @@ export default {
 </script>
 
 <style>
+.test-enter-active, .test-leave-active {
+  transition: opacity .5s;
+}
+.test-enter, .test-leave-active {
+  opacity: 0;
+}
 </style>
