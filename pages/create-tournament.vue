@@ -9,7 +9,7 @@
           </div>
           <div class="card-body">
             <div class="col-md-12">
-              <b-form-group>
+              <!-- <b-form-group>
                 <b-form-radio-group
                   v-model="selected.area_id"
                   text-field="name"
@@ -17,7 +17,7 @@
                   :options="area"
                 ></b-form-radio-group>
               </b-form-group>
-              <span v-if="errors.area_id" class="text-danger">Area is required</span>
+              <span v-if="errors.area_id" class="text-danger">Area is required</span> -->
               <div class="form-group">
                 <label class="col-sm-10 px-0 control label">Registration Due Date</label>
                 <div class="col-sm-10 px-0">
@@ -220,8 +220,6 @@
             </div>
           </div>
         </div>
-        {{selected}}
-        {{errors}}
       </div>
     </div>
   </div>
@@ -238,7 +236,7 @@ export default {
       },
       indonesia: require("~/static/city_province.json"),
       selected: {
-        area_id: 1,
+        area_id: 2,
         price: "",
         name: "",
         address: "",
