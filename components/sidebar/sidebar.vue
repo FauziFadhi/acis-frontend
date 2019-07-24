@@ -7,8 +7,8 @@
         alt="AdminLTE Logo"
         class="brand-image img-circle elevation-3"
         style="opacity: .8"
-      >
-      <span class="brand-text font-weight-light">AdminLTE 3</span>
+      />
+      <span class="brand-text font-weight-light">ACIS</span>
     </a>
 
     <!-- Sidebar -->
@@ -16,7 +16,7 @@
       <!-- Sidebar user panel (optional) -->
       <div class="user-panel mt-3 pb-3 mb-3 d-flex">
         <div class="image">
-          <img src="dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
+          <img src="dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image" />
         </div>
         <div class="info">
           <a href="#" class="d-block">{{user.name}}</a>
@@ -33,30 +33,37 @@
           >
             <!-- Add icons to the links using the .nav-icon class
             with font-awesome or any other icon font library-->
+            <template v-if="committee">
+              <li class="nav-item">
+                <nuxt-link :to="'/dashboard/competition/'+$route.params.id" class="nav-link">
+                  <i class="nav-icon fa fa-dashboard"></i>
+                  <p>Competition</p>
+                </nuxt-link>
+              </li>
+              <li class="nav-item">
+                <nuxt-link
+                  :to="'/dashboard/competition/'+$route.params.id+'/participants'"
+                  class="nav-link"
+                >
+                  <i class="nav-icon fa fa-th"></i>
+                  <p>Participants</p>
+                </nuxt-link>
+              </li>
+            </template>
             <li class="nav-item">
-              <nuxt-link :to="'/dashboard/competition/'+$route.params.id" class="nav-link">
-                <i class="nav-icon fa fa-dashboard"></i>
-                <p>
-                  Competition
-                </p>
-              </nuxt-link>
-            </li>
-            <li class="nav-item">
-              <nuxt-link :to="'/dashboard/competition/'+$route.params.id+'/participants'" class="nav-link">
-                <i class="nav-icon fa fa-th"></i>
-                <p>
-                  Participants
-                </p>
-              </nuxt-link>
-            </li>
-            <li class="nav-item">
-              <nuxt-link class="nav-link" :to="'/dashboard/competition/'+$route.params.id+'/qualification'">
+              <nuxt-link
+                class="nav-link"
+                :to="'/dashboard/competition/'+$route.params.id+'/qualification'"
+              >
                 <i class="fa fa-circle-o nav-icon"></i>
                 <p>Qualification</p>
               </nuxt-link>
             </li>
             <li class="nav-item">
-              <nuxt-link :to="'/dashboard/competition/'+$route.params.id+'/elimination'" class="nav-link">
+              <nuxt-link
+                :to="'/dashboard/competition/'+$route.params.id+'/elimination'"
+                class="nav-link"
+              >
                 <i class="fa fa-circle-o nav-icon"></i>
                 <p>Elimination</p>
               </nuxt-link>
@@ -72,7 +79,25 @@
 
 <script>
 export default {
-  name: "sidebar"
+  name: "sidebar",
+  data() {
+    return {
+      committee: false
+    };
+  },
+  created() {
+    this.$axios
+      .get("/competitions", {
+        params: {
+          createdBy: this.user.id
+        }
+      })
+      .then(resp => {
+        if (resp.data.data.length == 0) {
+          this.committee = false;
+        } else this.committee = true;
+      });
+  }
 };
 </script>
 

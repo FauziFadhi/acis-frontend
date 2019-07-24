@@ -1,6 +1,6 @@
 <template>
   <div>
-    <table class="table table-striped">
+    <table class="table table-striped table-responsive-md">
       <thead>
         <tr>
           <th>No</th>
@@ -37,7 +37,7 @@
         </tr>
       </tbody>
     </table>
-    <dashboardModal :idModal="'validateCompetition'" :title="'Validate Competition'">
+    <dashboardModal :idModal="'validateCompetition'" ref="validateCompetition" :title="'Validate Competition'">
       <template v-slot:default>
         <div class="col-md-12 px-0">
           <div class="col-md-12 px-0">
@@ -89,7 +89,7 @@
             </div>
           </div>
           <div class="col-md-12 justify-content-center px-0">
-            <table class="table table-stripped table-bordered">
+            <table class="table table-stripped table-bordered table-responsive-md">
               <thead>
                 <tr>
                   <th>Category Name</th>
@@ -105,7 +105,7 @@
             </table>
           </div>
           <div class="col-md-12 justify-content-center px-0">
-            <table class="table table-stripped table-bordered">
+            <table class="table table-stripped table-bordered table-responsive-md">
               <thead>`
                 <tr>
                   <th>Document</th>
@@ -114,7 +114,7 @@
               </thead>
               <tbody>
                 <tr v-for="upload in competition.competitionUploads" :key="upload.id">
-                  <td>Type</td>
+                  <td>{{upload.type}}</td>
                   <td><a :href="storageApi+upload.url">download</a></td>
                 </tr>
               </tbody>
@@ -123,8 +123,8 @@
         </div>
       </template>
       <template v-slot:footer>
-        <button type="button" class="btn btn-success" @click="competitionValidate(true)">Accept</button>
-        <button type="button" class="btn-sm btn-danger" @click="competitionValidate(false)">Reject</button>
+        <button type="button" class="btn btn-success" data-dismiss="modal" @click="competitionValidate(true)">Accept</button>
+        <button type="button" class="btn-sm btn-danger" data-dismiss="modal" @click="competitionValidate(false)">Reject</button>
       </template>
     </dashboardModal>
   </div>
@@ -140,7 +140,9 @@ export default {
     return {
       competitions: [],
       competition: {
-        city:{},
+        city:{
+          province:null
+        },
         competitionDetails: [
           {category:{}}
         ],
@@ -156,7 +158,8 @@ export default {
   },
   methods:{
     getCompetition(id){
-      this.$axios.get('/competitions/'+id,{params:{load: "city,competitionDetails.category,competitionUploads,createdBy"}}).then((resp)=> {
+      this.$axios.get('/competitions/'+id,{params:{load: "city,competitionDetails.category,competitionUploads,createdBy"}}).then((resp) =>{
+
         this.competition = resp.data.data;
       })
     },
@@ -174,13 +177,28 @@ export default {
         console.log(e.response.data.errors)
       }
       )
+      console.log(this.$refs.validateCompetition)
+      setInterval(() => {
+        
+        this.$axios
+          .get("/competitions", {
+            params: {
+              load:
+                "city",
+                orderByDate: 'desc'
+            }
+          })
+          .then(resp => {
+            this.competitions = resp.data.data;
+          });
+      }, 2000);
     }
   },
-  async created() {
+  created() {
     if (this.user.id != 1) {
       this.$axios
         .get("/competitions", {
-          params: { createdBy: this.user.id, load: "city" }
+          params: { createdBy: this.user.id, load: "city", findScorer: this.user.id }
         })
         .then(resp => {
           this.competitions = resp.data.data;

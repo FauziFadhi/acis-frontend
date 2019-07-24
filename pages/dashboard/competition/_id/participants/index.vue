@@ -30,22 +30,23 @@
               v-for="(details,index) in competition.competitionDetails"
               :key="details.category.id"
             >
+              <nuxt-link :to="{name: 'print-participants',params: {participants:getConfirmed(details.participants),category:details.category.name}}" class="btn ml-auto btn-secondary mb-2">print</nuxt-link>
               <div class="overflow-auto" style="height: 600px; overflow:hidden;">
-                <table class="table table-condensed table-stripped">
+                <table class="table table-condensed table-stripped table-responsive-md">
                   <tbody>
                     <tr>
                       <th style="width: 40px">#</th>
-                      <th>Label</th>
+                      <th>Name</th>
                       <th>Status</th>
                       <th>Payment Status</th>
                       <th style="width: 40px">action</th>
                     </tr>
                     <template v-if="details.participants.length!=0">
                       <tr v-for="(participant,i) in details.participants" :key="participant.id">
-                        <td>{{i+1}}</td>
+                        <td class="warning">{{i+1}}</td>
                         <td>{{participant.user.name}}</td>
-                        <td>{{participant.status}}</td>
-                        <td>{{getPaymentLastStatus(participant.paymentReceipts)}}</td>
+                        <td><span :class="participant.status=='Pending'?'bg-warning':'bg-success'" class="p-1">{{participant.status}}</span></td>
+                        <td><span :class="getPaymentLastStatus(participant.paymentReceipts)=='Pending'?'bg-warning':getPaymentLastStatus(participant.paymentReceipts)=='Accepted'?'bg-success':'bg-danger'" class="p-1">{{getPaymentLastStatus(participant.paymentReceipts)}}</span></td>
                         <td>
                           <button
                             class="btn-sm btn-success"
@@ -91,7 +92,7 @@
               </a>
             </div>
             <div class="col-md-8">
-              <table class="table-stripped table">
+              <table class="table-stripped table table-responsive-md">
                 <thead>
                   <tr>
                     <th>#</th>
@@ -145,7 +146,6 @@
         </div>
       </div>
     </div>
-    {{test}}
   </div>
 </template>
 
@@ -162,7 +162,11 @@ export default {
       }
     };
   },
+  transition: 'test',
   methods: {
+    getConfirmed(participants){
+      return _.filter(participants,{'status':'Confirmed'})
+    },
     validateClick(id) {
       this.participantId = id;
       console.log(this.participantId);
@@ -212,11 +216,6 @@ export default {
         });
     }
   },
-  computed: {
-    test(){
-      console.log("Test")  
-    }
-  },
   async created() {
     let {data} = await this.$axios
       .get("/competitions/" + this.$route.params.id, {
@@ -236,4 +235,10 @@ export default {
 </script>
 
 <style>
+.test-enter-active, .test-leave-active {
+  transition: opacity .5s;
+}
+.test-enter, .test-leave-active {
+  opacity: 0;
+}
 </style>

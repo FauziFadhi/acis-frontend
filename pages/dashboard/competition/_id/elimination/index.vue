@@ -20,7 +20,7 @@
     <div class="card-body overflow-auto" style="height: 720px">
       <!-- Tab panes -->
       <!-- TODO: dont forget to change id title and body -->
-      <div class="tab-content text-center">
+      <div class="tab-content">
         <div
           class="tab-pane"
           :id="'tab_'+index"
@@ -29,6 +29,7 @@
           role="tabpanel"
           :class="index==0?'active show':''"
         >
+          <nuxt-link :to="{name: 'print-elimination',params: {bracketData: bracketData,detailId:detail.id,category:detail.category.name}}" class="btn btn-secondary mb-2">print</nuxt-link>
           <div :id="'big'+(detail.id)" class="align-middle">
             <div class="demo"></div>
           </div>
@@ -36,7 +37,7 @@
       </div>
     </div>
     <button id="matchCallback" hidden data-target="#eliminationScore" data-toggle="modal">asdsd</button>
-    <dashboardModal ref="eliminationScore" :idModal="'eliminationScore'" :title="'Qualification Score'">
+    <dashboardModal ref="eliminationScore" :idModal="'eliminationScore'" :title="'Elimination Score'">
       <template v-slot:default>
         <div class="col-md-12">
           <div class="row">
@@ -47,7 +48,7 @@
               <div class="col-md px-0 text-center">
                 <h3>{{getTotalPoint[0]}}</h3>
               </div>
-              <table class="table-striped table">
+              <table class="table-striped table table-responsive-md">
                 <thead>
                   <tr>
                     <th rowspan="2" class="align-middle">Round</th>
@@ -86,6 +87,8 @@
                           type="text"
                           v-model="round[i-1].scores1[j-1]"
                           name
+                          onkeypress='return event.charCode >= 48 && event.charCode <= 57 || event.charCode == 88 || event.charCode == 77'
+
                           size="2"
                         />
                       </td>
@@ -102,7 +105,7 @@
               <div class="col-md px-0 text-center">
                 <h3>{{getTotalPoint[1]}}</h3>
               </div>
-              <table class="table-striped table">
+              <table class="table-striped table table-responsive-md">
                 <thead>
                   <tr>
                     <th colspan="3" class="text-center">Arrow</th>
@@ -137,6 +140,7 @@
                           @input="score2(i-1,j-1)"
                           maxlength="2"
                           type="text"
+                          onkeypress='return event.charCode >= 48 && event.charCode <= 57 || event.charCode == 88 || event.charCode == 77'
                           v-model="round[i-1].scores2[j-1]"
                           name
                           size="2"
@@ -145,6 +149,7 @@
                       <td>
                         {{totalRound2[i-1]}}
                         <button
+                        data-dismiss="modal"
                           class="btn-sm py-0 m-0 btn-success"
                           @click="submit(i)"
                         >Go</button>
@@ -172,6 +177,7 @@ export default {
   },
   data() {
     return {
+      bracketData: {},
       competition: {},
       match: {
         participant_1: {
@@ -224,6 +230,7 @@ export default {
         .get("/eliminations", { params: { competition_detail_id: i } })
         .then(resp1 => {
           matchData = resp1.data;
+          this.bracketData = resp1.data
           // matchData.results = resp.data.results
           $("div#big" + i + " .demo").bracket({
             teamWidth: 200,
@@ -231,7 +238,7 @@ export default {
             onMatchClick: this.getMatch
             // decorator: { edit: edit_fn, render: render_fn }
           });
-        });
+        }).catch(e => this.bracketData = {});
     },
     submit(round) {
       let data = {
@@ -250,15 +257,17 @@ export default {
     },
     getTotalScore(data, prop) {
       return _.sumBy(data, function(o) {
-        if (o[prop] == "m") {
+        if (o[prop] == "M") {
           return 0;
-        } else if (o[prop] == "x") return 10;
+        } else if (o[prop] == "X") return 10;
         else return parseInt(o[prop]);
       });
     },
     getMatch(data) {
-      let d = new Date()
-      if(d<new Date(this.competition.start_date) || d> new Date(this.competition.end_date)){
+      let d = new Date();
+      let d1 = new Date();
+      d.setDate(d.getDate()-1)
+      if(d1<new Date(this.competition.start_date) || d> new Date(this.competition.end_date)){
         
         return this.$toast.error("cant update score for now")
       }
@@ -271,8 +280,8 @@ export default {
     score(i, j) {
       let str1 = this.round[i].scores1[j];
       if (typeof str1 != "number" || str1 != null) {
-        if (str1.toLowerCase() == "m") this.angka1[j] = 0;
-        else if (str1.toLowerCase() == "x") this.angka1[j] = 10;
+        if (str1 == "M") this.angka1[j] = 0;
+        else if (str1 == "X") this.angka1[j] = 10;
         else this.angka1[j] = parseInt(str1);
       } else {
         this.angka1[j] = parseInt(str1, 10);
@@ -308,7 +317,7 @@ export default {
     this.$axios
       .get("/competitions/" + this.$route.params.id, {
         params: {
-          load: "competitionDetails.category,competitionDetails.participants"
+          load: "competitionDetails.category"
         }
       })
       .then(resp => {
@@ -321,6 +330,7 @@ export default {
           })
           .then(resp1 => {
             matchData = resp1.data;
+            this.bracketData = resp1.data;
             // matchData.results = resp.data.results
             $(
               "div#big" + this.competition.competitionDetails[0].id + " .demo"
