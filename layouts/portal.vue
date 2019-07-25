@@ -105,14 +105,14 @@
           <div class="container">
             <div class="content-center brand">
               <img class="n-logo" src alt>
-              <h1 class="h1-seo">Now UI Kit.</h1>
-              <h3>A beautiful Bootstrap 4 UI kit. Yours free.</h3>
+              <h1 class="h1-seo">ACIS</h1>
+              <h3>Archery Competition Information System</h3>
             </div>
             <h6 class="category category-absolute">
               Designed by
               <a href target="_blank">
                 <img src class="invision-logo">
-              </a>. Coded by
+              </a>. Coded by Fauzi Fadhillah
               <a href="https://www.creative-tim.com" target="_blank">
                 <img src class="creative-tim-logo">
               </a>.
@@ -124,7 +124,7 @@
         <footer class="footer" data-background-color="black">
           <div class="container">
             <nav>
-              <ul>
+              <!-- <ul>
                 <li>
                   <a href="https://www.creative-tim.com">Creative Tim</a>
                 </li>
@@ -139,15 +139,15 @@
                     href="https://github.com/creativetimofficial/now-ui-kit/blob/master/LICENSE.md"
                   >MIT License</a>
                 </li>
-              </ul>
+              </ul> -->
             </nav>
             <div class="copyright">
-              &copy; j
+              &copy; 
               <script>
   <!-- document.write(new Date().getFullYear()) -->
-              </script>2019, Designed by
-              <a href="http://www.invisionapp.com" target="_blank">Invision</a>. Coded by
-              <a href="https://www.creative-tim.com" target="_blank">Creative Tim</a>.
+              </script>2019, Designed by Fauzi Fadhillah
+              <!-- <a href="http://www.invisionapp.com" target="_blank">Invision</a>. Coded by
+              <a href="https://www.creative-tim.com" target="_blank">Creative Tim</a>. -->
             </div>
           </div>
         </footer>
