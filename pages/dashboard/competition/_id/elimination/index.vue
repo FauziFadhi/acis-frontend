@@ -95,6 +95,11 @@
                       <td>{{totalRound1[i-1]}}</td>
                     </template>
                   </tr>
+                  <tr v-if="getTotalPoint[0] == 5 && getTotalPoint[1]== 5">
+                    <td colspan="4">
+                      <input type="text" class="pull-right" v-model="shootOff[0]" placeholder="cm">
+                      </td>
+                  </tr>
                 </tbody>
               </table>
             </div>
@@ -156,6 +161,18 @@
                       </td>
                     </template>
                   </tr>
+                  <template v-if="getTotalPoint[0] == 5 && getTotalPoint[1]== 5">
+                  <tr>
+                    <td colspan="4">
+                    <input type="text" v-model="shootOff[1]" placeholder="cm">
+                    <button
+                        data-dismiss="modal"
+                        @click="postShootOff"
+                          class="btn-sm py-0 m-0 btn-success"
+                        >Go</button>
+                    </td>
+                  </tr>
+                  </template>
                 </tbody>
               </table>
             </div>
@@ -177,6 +194,7 @@ export default {
   },
   data() {
     return {
+      shootOff: [],
       bracketData: {},
       competition: {},
       match: {
@@ -221,6 +239,26 @@ export default {
     };
   },
   methods: {
+    postShootOff(){
+      let data = {
+        score_1: this.shootOff[0],
+        score_2: this.shootOff[1],
+        round: 6,
+        id: this.match.id
+      };
+      if(this.match.scores[5])
+        this.$axios.put('/shoot-off/'+this.match.id,data).then(resp => {
+          this.$toast.success("berhasil update shoot Off")
+        }).catch(resp => {
+          this.$toast.error("Something wrong");
+        })
+      else 
+        this.$axios.post('/shoot-off',data).then(resp => {
+          this.$toast.success("berhasil update shoot Off")
+        }).catch(resp => {
+          this.$toast.error("Something wrong");
+        })
+    },
     getBracket(i) {
       let matchData = {
         teams: null,
