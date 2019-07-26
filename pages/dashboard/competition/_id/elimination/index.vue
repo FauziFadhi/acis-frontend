@@ -87,7 +87,7 @@
                           type="text"
                           v-model="round[i-1].scores1[j-1]"
                           name
-                          onkeypress='return event.charCode >= 48 && event.charCode <= 57 || event.charCode == 88 || event.charCode == 77'
+                          onkeypress='return event.target.value == "" && (event.charCode >= 49 && event.charCode <= 57) || event.charCode == 77 || event.charCode == 88 || event.target.value == "1" && event.charCode == 48'
 
                           size="2"
                         />
@@ -145,7 +145,7 @@
                           @input="score2(i-1,j-1)"
                           maxlength="2"
                           type="text"
-                          onkeypress='return event.charCode >= 48 && event.charCode <= 57 || event.charCode == 88 || event.charCode == 77'
+                          onkeypress='return event.target.value == "" && (event.charCode >= 49 && event.charCode <= 57) || event.charCode == 77 || event.charCode == 88 || event.target.value == "1" && event.charCode == 48'
                           v-model="round[i-1].scores2[j-1]"
                           name
                           size="2"
