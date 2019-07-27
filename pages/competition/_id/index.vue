@@ -377,6 +377,11 @@
           >{{details.category.name}}</option>
         </select>
       </div>
+      <b-form-group>
+        <span>Document Requirement</span>
+        <input type="file" id="file" ref="file1" v-on:change="handleFileUpload1()" />
+        <!-- <span v-if="errors.file" class="text-danger">{{errors.file[0]}}</span> -->
+      </b-form-group>
     </modal>
     <!--  End Modal -->
   </div>
@@ -486,6 +491,9 @@ export default {
     handleFileUpload() {
       this.file = this.$refs.file.files[0];
     },
+    handleFileUpload1() {
+      this.file = this.$refs.file1.files[0];
+    },
     removeParticipant: function(participant) {
       this.paymentParticipantList.push(participant);
       for (let i = 0; i < this.paymentParticipant.length; i++) {
@@ -511,11 +519,15 @@ export default {
         return this.$toast.error("you are late to join this tournament");
 
       if (this.official == 1) {
+        let data = new FormData();
+        data.append("file", this.file);
+        data.append("status", "Pending");
+        data.append("competition_detail_id", this.registerCompId);
+        data.append("user_id", this.offParticipant);
+        data.append("official", this.user.id);
         this.$axios
-          .post("/participants", {
-            competition_detail_id: this.registerCompId,
-            user_id: this.offParticipant,
-            official: this.user.id
+          .post("/participants", data, {
+            headers: { "Content-Type": "multipart/form-data" }
           })
           .then(resp => {
             this.$toast.success("Success to Register Category");
@@ -532,10 +544,14 @@ export default {
             }
           });
       } else {
+        let data = new FormData();
+        data.append("file", this.file);
+        data.append("status", "Pending");
+        data.append("competition_detail_id", this.registerCompId);
+        data.append("user_id", this.user.id);
         this.$axios
-          .post("/participants", {
-            competition_detail_id: this.registerCompId,
-            user_id: this.user.id
+          .post("/participants", data, {
+            headers: { "Content-Type": "multipart/form-data" }
           })
           .then(resp => {
             this.$toast.success("Success to Register Category");

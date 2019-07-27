@@ -98,6 +98,7 @@
                     <th>#</th>
                     <th>Name</th>
                     <th>Category</th>
+                    <th>Requirement</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -108,6 +109,7 @@
                     <td>{{index+1}}</td>
                     <td>{{participant.user.name}}</td>
                     <td>{{participant.competitionDetail.category.name}}</td>
+                    <td><a :href="storageApi+participant.doc">Doc</a></td>
                   </tr>
                 </tbody>
               </table>
