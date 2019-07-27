@@ -358,10 +358,20 @@
       ref="registerModal"
     >
       <div class="form-group">
+        <b-form-checkbox v-model="official" value="1" unchecked-value="0">as Official</b-form-checkbox>
+      </div>
+
+      <div class="form-group" v-if="official == 1">
+        <span>Participant</span>
+        <select v-model="offParticipant" class="form-control">
+          <option v-for="user in users" :key="user.id" :value="user.id">{{user.name}}</option>
+        </select>
+      </div>
+      <div class="form-group">
         <span>Category</span>
         <select v-model="registerCompId" class="form-control">
           <option
-            v-for="details in competition.competitionDetails"
+            v-for="details in categories"
             :key="details.category.id"
             :value="details.id"
           >{{details.category.name}}</option>
@@ -394,6 +404,23 @@ export default {
     },
     competition: function(val) {
       this.currencyFormatted(val.price);
+    },
+    official: function(val) {
+      if (val == 1) {
+        this.categories = this.competition.competitionDetails;
+        this.$axios.get("/users").then(resp => {
+          this.users = resp.data;
+        });
+      } else {
+        let gender = this.user.gender;
+        this.categories = _.filter(
+          this.competition.competitionDetails,
+          function(q) {
+            if (q.category.gender == "Putra" && gender == "M") return q;
+            else if (q.category.gender == "Putri" && gender == "F") return q;
+          }
+        );
+      }
     }
   },
   methods: {
@@ -483,25 +510,48 @@ export default {
       if (d > new Date(this.competition.registration_due_date))
         return this.$toast.error("you are late to join this tournament");
 
-      this.$axios
-        .post("/participants", {
-          competition_detail_id: this.registerCompId,
-          user_id: this.user.id
-        })
-        .then(resp => {
-          this.$toast.success("Success to Register Category");
-        })
-        .catch(e => {
-          if (e.response.status == 401)
-            this.$toast.error(e.response.data.message);
-          if (e.response.data.errors.user_id) {
-            if (
-              e.response.data.errors.user_id[0] ==
-              "The user id has already been taken."
-            )
-              this.$toast.error("You Have been Registered");
-          }
-        });
+      if (this.official == 1) {
+        this.$axios
+          .post("/participants", {
+            competition_detail_id: this.registerCompId,
+            user_id: this.offParticipant,
+            official: this.user.id
+          })
+          .then(resp => {
+            this.$toast.success("Success to Register Category");
+          })
+          .catch(e => {
+            if (e.response.status == 401)
+              this.$toast.error(e.response.data.message);
+            if (e.response.data.errors.user_id) {
+              if (
+                e.response.data.errors.user_id[0] ==
+                "The user id has already been taken."
+              )
+                this.$toast.error("You Have been Registered");
+            }
+          });
+      } else {
+        this.$axios
+          .post("/participants", {
+            competition_detail_id: this.registerCompId,
+            user_id: this.user.id
+          })
+          .then(resp => {
+            this.$toast.success("Success to Register Category");
+          })
+          .catch(e => {
+            if (e.response.status == 401)
+              this.$toast.error(e.response.data.message);
+            if (e.response.data.errors.user_id) {
+              if (
+                e.response.data.errors.user_id[0] ==
+                "The user id has already been taken."
+              )
+                this.$toast.error("You Have been Registered");
+            }
+          });
+      }
     },
     currencyFormatted: function(num) {
       let p = parseInt(num)
@@ -520,18 +570,18 @@ export default {
     }
   },
   mounted() {
-    this.$axios	
-      .get("/participants", {	
-        params: {	
-          load: "competitionDetail.category",	
-          payment: this.$route.params.id	
-        }	
-      })	
-      .then(resp => {	
-        this.paymentParticipantList= resp.data.data ;	
-      })	
-      .catch(e => {	
-        this.errors.response.data.errors;	
+    this.$axios
+      .get("/participants", {
+        params: {
+          load: "competitionDetail.category",
+          payment: this.$route.params.id
+        }
+      })
+      .then(resp => {
+        this.paymentParticipantList = resp.data.data;
+      })
+      .catch(e => {
+        this.errors.response.data.errors;
       });
     let matchData = {
       teams: null,
@@ -570,12 +620,16 @@ export default {
   data() {
     return {
       file: null,
+      official: 0,
+      users: [],
       paymentParticipant: [],
       modelParticipant: {},
       paymentParticipantList: [],
       participantId: null,
       loaded: false,
+      offParticipant: null,
       competition: {},
+      categories: [],
       price: null,
       registerCompId: null,
       errors: {
@@ -613,7 +667,7 @@ export default {
       loaded: false
     };
   },
-  async beforeCreate() {
+  async created() {
     console.log();
     this.$axios
       .get("/competitions/" + this.$route.params.id, {
@@ -625,6 +679,14 @@ export default {
         let labels = this.data.labels;
         let dataset = this.data.datasets;
         this.competition = resp.data.data;
+        let gender = this.user.gender;
+        this.categories = _.filter(
+          this.competition.competitionDetails,
+          function(q) {
+            if (q.category.gender == "Putra" && gender == "M") return q;
+            else if (q.category.gender == "Putri" && gender == "F") return q;
+          }
+        );
 
         _.map(this.competition.competitionDetails, function(comp) {
           labels.push(comp.category.name);
@@ -638,20 +700,20 @@ export default {
         // this.$router.push('/404')
       });
   }
-  // asyncData({ app, params }) {	
-  //   return app.$axios	
-  //     .get("/participants", {	
-  //       params: {	
-  //         load: "competitionDetail.category",	
-  //         payment: params.id	
-  //       }	
-  //     })	
-  //     .then(resp => {	
-  //       return { paymentParticipantList: resp.data.data };	
-  //     })	
-  //     .catch(e => {	
-  //       this.errors.response.data.errors;	
-  //     });	
+  // asyncData({ app, params }) {
+  //   return app.$axios
+  //     .get("/participants", {
+  //       params: {
+  //         load: "competitionDetail.category",
+  //         payment: params.id
+  //       }
+  //     })
+  //     .then(resp => {
+  //       return { paymentParticipantList: resp.data.data };
+  //     })
+  //     .catch(e => {
+  //       this.errors.response.data.errors;
+  //     });
   // }
 };
 </script>
