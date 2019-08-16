@@ -23,49 +23,51 @@
       <!-- TODO: dont forget to change id title and body -->
       <div class="tab-content">
         <template v-for="(detail,index) in competition.competitionDetails">
-        <div
-          class="tab-pane"
-          :id="'qualification_'+index"
-          
-          :key="detail.category.id"
-          role="tabpanel"
-          :class="index==0?'active show':''"
-        >
-        <nuxt-link :to="{name: 'print-qualification',params: {participants:participants,category:detail.category.name}}" class="btn btn-secondary mb-2">print</nuxt-link>
+          <div
+            class="tab-pane"
+            :id="'qualification_'+index"
+            :key="detail.category.id"
+            role="tabpanel"
+            :class="index==0?'active show':''"
+          >
+            <nuxt-link
+              :to="{name: 'print-qualification',params: {participants:participants,category:detail.category.name}}"
+              class="btn btn-secondary mb-2"
+            >print</nuxt-link>
 
-          <table class="table-striped table table-responsive-md text-center">
-            <thead>
-              <tr>
-                <th>No</th>
-                <th>Nama</th>
-                <th>Total</th>
-                <th>X+10</th>
-                <th>X</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr
-                v-for="(participant,i) in participants"
-                @click="openQualificationModal(participant)"
-                :key="participant.id"
-                :data-id="participant.id"
-                data-target="#qualificationScore"
-                data-toggle="modal"
-              >
-                <td>{{i+1}}</td>
-                <td>{{participant.user.name}}</td>
-                <td>{{participant.totalScore}}</td>
-                <td>{{participant.totalsx10}}</td>
-                <td>{{participant.totalsx}}</td>
-              </tr>
-            </tbody>
-          </table>
-          <div class="form-group">
-            <span>Generate Bracket:</span>
-            <input v-model="generate.size" maxlength="3" placeholder="Size Bracket" />
-            <button @click="generateBracket(detail.id)" class="btn-sm btn-danger">Generate</button>
+            <table class="table-striped table table-responsive-md text-center">
+              <thead>
+                <tr>
+                  <th>No</th>
+                  <th>Nama</th>
+                  <th>Total</th>
+                  <th>X+10</th>
+                  <th>X</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  v-for="(participant,i) in participants"
+                  @click="openQualificationModal(participant)"
+                  :key="participant.id"
+                  :data-id="participant.id"
+                  data-target="#qualificationScore"
+                  data-toggle="modal"
+                >
+                  <td>{{i+1}}</td>
+                  <td>{{participant.user.name}}</td>
+                  <td>{{participant.totalScore}}</td>
+                  <td>{{participant.totalsx10}}</td>
+                  <td>{{participant.totalsx}}</td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="form-group">
+              <span>Generate Bracket:</span>
+              <input v-model="generate.size" maxlength="3" placeholder="Size Bracket" />
+              <button @click="generateBracket(detail.id)" class="btn-sm btn-danger">Generate</button>
+            </div>
           </div>
-        </div>
         </template>
       </div>
     </div>
@@ -110,19 +112,24 @@
               </template>
               <template v-else>
                 <td v-for="j in 6" :key="j">
-                  <input
-                    @input="score(i-1,j-1)"
-                    maxlength="2"
-                    type="text"
+                  <select
+                    class="form-control"
+                    @change="score(i-1,j-1)"
                     v-model="round[i-1].scores[j-1]"
-                    name
-                    onkeypress='return event.target.value == "" && (event.charCode >= 49 && event.charCode <= 57) || event.charCode == 77 || event.charCode == 88 || event.target.value == "1" && event.charCode == 48'
-                    size="2"
-                  />
+                  >
+                    <option selected disabled value></option>
+                    <template v-for="scoreA in $store.state.auth.score">
+                      <option :value="scoreA" :key="scoreA">{{scoreA}}</option>
+                    </template>
+                  </select>
                 </td>
                 <td>
                   {{totalRound[i-1]}}
-                  <button class="btn-sm btn-success" @click="submit(i)" data-dismiss="modal">Go</button>
+                  <button
+                    class="btn-sm btn-success"
+                    @click="submit(i)"
+                    data-dismiss="modal"
+                  >Go</button>
                 </td>
               </template>
             </tr>
@@ -224,7 +231,7 @@ export default {
       this.totalRound[i] = _.sum(this.angka);
     },
     orderByTotal(detail) {
-      console.log(detail.participants)
+      console.log(detail.participants);
       this.participants = _.filter(detail.participants, {
         status: "Confirmed"
       });
@@ -232,7 +239,7 @@ export default {
     openQualificationModal(id) {
       let d = new Date();
       let d1 = new Date();
-      d.setDate(d.getDate()-1)
+      d.setDate(d.getDate() - 1);
       if (
         d1 < new Date(this.competition.start_date) ||
         d > new Date(this.competition.end_date)
