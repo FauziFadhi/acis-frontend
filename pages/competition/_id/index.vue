@@ -404,7 +404,7 @@ export default {
           if (this.paymentParticipantList[i] === this.modelParticipant) {
             this.paymentParticipantList.splice(i, 1);
           }
-        }
+        } 
       }
     },
     competition: function(val) {
@@ -688,7 +688,7 @@ export default {
     this.$axios
       .get("/competitions/" + this.$route.params.id, {
         params: {
-          load: "competitionDetails.category,competitionDetails.participants"
+          load: "competitionDetails.category,competitionDetails.participants,competitionDocuments"
         }
       })
       .then(resp => {

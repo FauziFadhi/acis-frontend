@@ -27,7 +27,7 @@
           >
             <!-- Add icons to the links using the .nav-icon class
             with font-awesome or any other icon font library-->
-            <template v-if="committee">
+            <template v-if="$store.state.auth.committee">
               <li class="nav-item">
                 <nuxt-link :to="'/dashboard/competition/'+$route.params.id" class="nav-link">
                   <i class="nav-icon fa fa-dashboard"></i>
@@ -45,13 +45,13 @@
               </li>
             </template>
             <li class="nav-item">
-              <nuxt-link
+              <n-link
                 class="nav-link"
                 :to="'/dashboard/competition/'+$route.params.id+'/qualification'"
               >
                 <i class="fa fa-circle-o nav-icon"></i>
                 <p>Qualification</p>
-              </nuxt-link>
+              </n-link>
             </li>
             <li class="nav-item">
               <nuxt-link
@@ -74,23 +74,34 @@
 <script>
 export default {
   name: "sidebar",
-  data() {
-    return {
-      committee: false
-    };
-  },
   created() {
-    this.$axios
-      .get("/competitions", {
+    // this.$axios
+    //   .get("/competitions", {
+    //     params: {
+    //       createdBy: this.user.id
+    //     }
+    //   })
+    //   .then(resp => {
+    //     if (resp.data.data.length == 0) {
+    //       this.committee = false;
+    //     } else this.committee = true;
+    //   });
+  },
+  fetch ({ store, params, app }) {
+    return app.$axios.get("/competitions", {
         params: {
-          createdBy: this.user.id
+          createdBy: store.state.auth.user.id
         }
       })
-      .then(resp => {
-        if (resp.data.data.length == 0) {
-          this.committee = false;
-        } else this.committee = true;
-      });
+    .then(res => {
+      console.log("set committee")
+      if (res.data.data.length == 0) {
+        store.commit('auth/setCommittee', true)
+
+        } else store.commit('auth/setCommittee', true)
+    }).catch(e => {
+      console.log("failed")
+    })
   }
 };
 </script>

@@ -274,19 +274,31 @@ export default {
     }
   },
 
-  created() {
-    this.$axios
-      .get("/competitions/" + this.$route.params.id, {
+  mounted() {
+    console.log(this.$store.state)
+    this.competition = this.$store.state.competition.getCompetition
+    // this.$axios
+    //   .get("/competitions/" + this.$route.params.id, {
+    //     params: {
+    //       load: "competitionDetails.category,competitionDetails.participants"
+    //     }
+    //   })
+    //   .then(resp => {
+    //     this.competition = resp.data.data;
+    //   })
+    //   .catch(e => {
+    //     // this.$router.push('/404')
+    //   });
+  },
+  fetch ({ store, params, app }) {
+    return app.$axios.get("/competitions/" + params.id, {
         params: {
           load: "competitionDetails.category,competitionDetails.participants"
         }
       })
-      .then(resp => {
-        this.competition = resp.data.data;
-      })
-      .catch(e => {
-        // this.$router.push('/404')
-      });
+    .then((res) => {
+      store.commit('competition/setCompetition', res.data.data)
+    })
   }
 };
 </script>
