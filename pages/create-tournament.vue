@@ -57,6 +57,15 @@
                   </div>
                 </div>
               </div>
+              <div class="form-group">
+                <label class="col-sm-10 px-0 control label">Documents for Participants</label>
+                <div class="col-sm-10 px-0">
+                  <div class="input-group">
+                    <input type="text" class="form-control" length="20" v-model="selected.documents" placeholder="ktp,kk,akta"><br>
+                    <!-- <span class="sm text-red">Contoh Penulisan kk,ktp</span> -->
+                  </div>
+                </div>
+              </div>
             </div>
             <hr>
             <b-form-group>
@@ -316,6 +325,7 @@ export default {
       data.append("area_id", this.selected.area_id);
       data.append("description", this.selected.description);
       data.append("city_id", this.selected.city_id);
+      data.append("documents", this.selected.documents);
       data.append("address", this.selected.address);
       data.append("price", this.selected.price.replace(",",""));
       data.append("competitionUploads[0][type]", "pdf");

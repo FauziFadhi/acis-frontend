@@ -358,15 +358,40 @@
       ref="registerModal"
     >
       <div class="form-group">
+        <b-form-checkbox v-model="official" value="1" unchecked-value="0">as Official</b-form-checkbox>
+      </div>
+
+      <div class="form-group" v-if="official == 1">
+        <span>Participant</span>
+        <select v-model="offParticipant" class="form-control">
+          <option v-for="user in users" :key="user.id" :value="user.id">{{user.name}}</option>
+        </select>
+      </div>
+      <div class="form-group">
         <span>Category</span>
         <select v-model="registerCompId" class="form-control">
           <option
-            v-for="details in competition.competitionDetails"
+            v-for="details in categories"
             :key="details.category.id"
             :value="details.id"
           >{{details.category.name}}</option>
         </select>
       </div>
+      <template v-for="doc in competition.documents">
+        <b-form-group :key="doc.name">
+          <div class="col-md-12 p-0">
+            <div class="col-md-4 p-0">
+
+          <span class="">{{doc.name}}:</span>
+            </div>
+            <div class="col-md p-0">
+          <!-- <span v-if="errors.file" class="text-danger">{{errors.file[0]}}</span> -->
+
+            </div>
+          </div>
+          <input type="file" id="file" class="" ref="file1" v-on:change="handleFileUpload1" />
+        </b-form-group>
+      </template>
     </modal>
     <!--  End Modal -->
   </div>
@@ -394,6 +419,23 @@ export default {
     },
     competition: function(val) {
       this.currencyFormatted(val.price);
+    },
+    official: function(val) {
+      if (val == 1) {
+        this.categories = this.competition.competitionDetails;
+        this.$axios.get("/users").then(resp => {
+          this.users = resp.data;
+        });
+      } else {
+        let gender = this.user.gender;
+        this.categories = _.filter(
+          this.competition.competitionDetails,
+          function(q) {
+            if (q.category.gender == "Putra" && gender == "M") return q;
+            else if (q.category.gender == "Putri" && gender == "F") return q;
+          }
+        );
+      }
     }
   },
   methods: {
@@ -459,6 +501,11 @@ export default {
     handleFileUpload() {
       this.file = this.$refs.file.files[0];
     },
+    handleFileUpload1(event) {
+      // console.log(event);
+      // this.file = this.$refs.file1.files[0];
+      this.files.push(event.target.files[0]);
+    },
     removeParticipant: function(participant) {
       this.paymentParticipantList.push(participant);
       for (let i = 0; i < this.paymentParticipant.length; i++) {
@@ -483,10 +530,22 @@ export default {
       if (d > new Date(this.competition.registration_due_date))
         return this.$toast.error("you are late to join this tournament");
 
+      let data = new FormData();
+      // data.append("file", this.file);
+      for(let i = 0; i<this.files.length; i++){
+        data.append("documents["+i+"]",this.files[i]);
+      }
+      data.append("status", "Pending");
+      data.append("competition_detail_id", this.registerCompId);
+      if (this.official == 1) {
+        data.append("user_id", this.offParticipant);
+        data.append("official", this.user.id);
+      } else {
+        data.append("user_id", this.user.id);
+      }
       this.$axios
-        .post("/participants", {
-          competition_detail_id: this.registerCompId,
-          user_id: this.user.id
+        .post("/participants", data, {
+          headers: { "Content-Type": "multipart/form-data" }
         })
         .then(resp => {
           this.$toast.success("Success to Register Category");
@@ -520,18 +579,18 @@ export default {
     }
   },
   mounted() {
-    this.$axios	
-      .get("/participants", {	
-        params: {	
-          load: "competitionDetail.category",	
-          payment: this.$route.params.id	
-        }	
-      })	
-      .then(resp => {	
-        this.paymentParticipantList= resp.data.data ;	
-      })	
-      .catch(e => {	
-        this.errors.response.data.errors;	
+    this.$axios
+      .get("/participants", {
+        params: {
+          load: "competitionDetail.category",
+          payment: this.$route.params.id
+        }
+      })
+      .then(resp => {
+        this.paymentParticipantList = resp.data.data;
+      })
+      .catch(e => {
+        this.errors.response.data.errors;
       });
     let matchData = {
       teams: null,
@@ -570,12 +629,17 @@ export default {
   data() {
     return {
       file: null,
+      files: [],
+      official: 0,
+      users: [],
       paymentParticipant: [],
       modelParticipant: {},
       paymentParticipantList: [],
       participantId: null,
       loaded: false,
+      offParticipant: null,
       competition: {},
+      categories: [],
       price: null,
       registerCompId: null,
       errors: {
@@ -613,18 +677,27 @@ export default {
       loaded: false
     };
   },
-  async beforeCreate() {
+  async created() {
     console.log();
     this.$axios
       .get("/competitions/" + this.$route.params.id, {
         params: {
-          load: "competitionDetails.category,competitionDetails.participants"
+          load:
+            "competitionDetails.category,competitionDetails.participants,competitionDocuments"
         }
       })
       .then(resp => {
         let labels = this.data.labels;
         let dataset = this.data.datasets;
         this.competition = resp.data.data;
+        let gender = this.user.gender;
+        this.categories = _.filter(
+          this.competition.competitionDetails,
+          function(q) {
+            if (q.category.gender == "Putra" && gender == "M") return q;
+            else if (q.category.gender == "Putri" && gender == "F") return q;
+          }
+        );
 
         _.map(this.competition.competitionDetails, function(comp) {
           labels.push(comp.category.name);
@@ -638,20 +711,20 @@ export default {
         // this.$router.push('/404')
       });
   }
-  // asyncData({ app, params }) {	
-  //   return app.$axios	
-  //     .get("/participants", {	
-  //       params: {	
-  //         load: "competitionDetail.category",	
-  //         payment: params.id	
-  //       }	
-  //     })	
-  //     .then(resp => {	
-  //       return { paymentParticipantList: resp.data.data };	
-  //     })	
-  //     .catch(e => {	
-  //       this.errors.response.data.errors;	
-  //     });	
+  // asyncData({ app, params }) {
+  //   return app.$axios
+  //     .get("/participants", {
+  //       params: {
+  //         load: "competitionDetail.category",
+  //         payment: params.id
+  //       }
+  //     })
+  //     .then(resp => {
+  //       return { paymentParticipantList: resp.data.data };
+  //     })
+  //     .catch(e => {
+  //       this.errors.response.data.errors;
+  //     });
   // }
 };
 </script>

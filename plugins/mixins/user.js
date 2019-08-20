@@ -9,7 +9,8 @@ const User = {
                 ...mapGetters({
                     user: 'auth/user',
                     loggedIn: 'auth/loggedIn',
-                    storageApi: 'auth/storageApi'
+                    storageApi: 'auth/storageApi',
+                    listScore: 'auth/score'
                 })
             }
         })

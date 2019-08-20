@@ -29,7 +29,10 @@
           role="tabpanel"
           :class="index==0?'active show':''"
         >
-          <nuxt-link :to="{name: 'print-elimination',params: {bracketData: bracketData,detailId:detail.id,category:detail.category.name}}" class="btn btn-secondary mb-2">print</nuxt-link>
+          <nuxt-link
+            :to="{name: 'print-elimination',params: {bracketData: bracketData,detailId:detail.id,category:detail.category.name}}"
+            class="btn btn-secondary mb-2"
+          >print</nuxt-link>
           <div :id="'big'+(detail.id)" class="align-middle">
             <div class="demo"></div>
           </div>
@@ -37,7 +40,11 @@
       </div>
     </div>
     <button id="matchCallback" hidden data-target="#eliminationScore" data-toggle="modal">asdsd</button>
-    <dashboardModal ref="eliminationScore" :idModal="'eliminationScore'" :title="'Elimination Score'">
+    <dashboardModal
+      ref="eliminationScore"
+      :idModal="'eliminationScore'"
+      :title="'Elimination Score'"
+    >
       <template v-slot:default>
         <div class="col-md-12">
           <div class="row">
@@ -81,24 +88,24 @@
                     </template>
                     <template v-else>
                       <td v-for="j in 3" :key="j">
-                        <input
-                          @input="score(i-1,j-1)"
-                          maxlength="2"
-                          type="text"
+                        <select
+                          class="form-control"
+                          @change="score(i-1,j-1)"
                           v-model="round[i-1].scores1[j-1]"
-                          name
-                          onkeypress='return event.charCode >= 48 && event.charCode <= 57 || event.charCode == 88 || event.charCode == 77'
-
-                          size="2"
-                        />
+                        >
+                          <option selected disabled value></option>
+                          <template v-for="scoreA in $store.state.auth.score">
+                            <option :value="scoreA" :key="scoreA">{{scoreA}}</option>
+                          </template>
+                        </select>
                       </td>
                       <td>{{totalRound1[i-1]}}</td>
                     </template>
                   </tr>
                   <tr v-if="getTotalPoint[0] == 5 && getTotalPoint[1]== 5">
                     <td colspan="4">
-                      <input type="text" class="pull-right" v-model="shootOff[0]" placeholder="cm">
-                      </td>
+                      <input type="text" class="pull-right" v-model="shootOff[0]" placeholder="cm" />
+                    </td>
                   </tr>
                 </tbody>
               </table>
@@ -141,20 +148,21 @@
                     </template>
                     <template v-else>
                       <td v-for="j in 3" :key="j">
-                        <input
-                          @input="score2(i-1,j-1)"
-                          maxlength="2"
-                          type="text"
-                          onkeypress='return event.charCode >= 48 && event.charCode <= 57 || event.charCode == 88 || event.charCode == 77'
+                        <select
+                          class="form-control"
+                          @change="score2(i-1,j-1)"
                           v-model="round[i-1].scores2[j-1]"
-                          name
-                          size="2"
-                        />
+                        >
+                          <option selected disabled value></option>
+                          <template v-for="scoreA in $store.state.auth.score">
+                            <option :value="scoreA" :key="scoreA">{{scoreA}}</option>
+                          </template>
+                        </select>
                       </td>
                       <td>
                         {{totalRound2[i-1]}}
                         <button
-                        data-dismiss="modal"
+                          data-dismiss="modal"
                           class="btn-sm py-0 m-0 btn-success"
                           @click="submit(i)"
                         >Go</button>
@@ -162,16 +170,16 @@
                     </template>
                   </tr>
                   <template v-if="getTotalPoint[0] == 5 && getTotalPoint[1]== 5">
-                  <tr>
-                    <td colspan="4">
-                    <input type="text" v-model="shootOff[1]" placeholder="cm">
-                    <button
-                        data-dismiss="modal"
-                        @click="postShootOff"
+                    <tr>
+                      <td colspan="4">
+                        <input type="text" v-model="shootOff[1]" placeholder="cm" />
+                        <button
+                          data-dismiss="modal"
+                          @click="postShootOff"
                           class="btn-sm py-0 m-0 btn-success"
                         >Go</button>
-                    </td>
-                  </tr>
+                      </td>
+                    </tr>
                   </template>
                 </tbody>
               </table>
@@ -239,25 +247,31 @@ export default {
     };
   },
   methods: {
-    postShootOff(){
+    postShootOff() {
       let data = {
         score_1: this.shootOff[0],
         score_2: this.shootOff[1],
         round: 6,
         id: this.match.id
       };
-      if(this.match.scores[5])
-        this.$axios.put('/shoot-off/'+this.match.id,data).then(resp => {
-          this.$toast.success("berhasil update shoot Off")
-        }).catch(resp => {
-          this.$toast.error("Something wrong");
-        })
-      else 
-        this.$axios.post('/shoot-off',data).then(resp => {
-          this.$toast.success("berhasil update shoot Off")
-        }).catch(resp => {
-          this.$toast.error("Something wrong");
-        })
+      if (this.match.scores[5])
+        this.$axios
+          .put("/shoot-off/" + this.match.id, data)
+          .then(resp => {
+            this.$toast.success("berhasil update shoot Off");
+          })
+          .catch(resp => {
+            this.$toast.error("Something wrong");
+          });
+      else
+        this.$axios
+          .post("/shoot-off", data)
+          .then(resp => {
+            this.$toast.success("berhasil update shoot Off");
+          })
+          .catch(resp => {
+            this.$toast.error("Something wrong");
+          });
     },
     getBracket(i) {
       let matchData = {
@@ -268,7 +282,7 @@ export default {
         .get("/eliminations", { params: { competition_detail_id: i } })
         .then(resp1 => {
           matchData = resp1.data;
-          this.bracketData = resp1.data
+          this.bracketData = resp1.data;
           // matchData.results = resp.data.results
           $("div#big" + i + " .demo").bracket({
             teamWidth: 200,
@@ -276,7 +290,8 @@ export default {
             onMatchClick: this.getMatch
             // decorator: { edit: edit_fn, render: render_fn }
           });
-        }).catch(e => this.bracketData = {});
+        })
+        .catch(e => (this.bracketData = {}));
     },
     submit(round) {
       let data = {
@@ -304,10 +319,12 @@ export default {
     getMatch(data) {
       let d = new Date();
       let d1 = new Date();
-      d.setDate(d.getDate()-1)
-      if(d1<new Date(this.competition.start_date) || d> new Date(this.competition.end_date)){
-        
-        return this.$toast.error("cant update score for now")
+      d.setDate(d.getDate() - 1);
+      if (
+        d1 < new Date(this.competition.start_date) ||
+        d > new Date(this.competition.end_date)
+      ) {
+        return this.$toast.error("cant update score for now");
       }
       $("#matchCallback").click();
       // $(".match").on('click',function(event){
