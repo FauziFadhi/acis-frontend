@@ -377,11 +377,21 @@
           >{{details.category.name}}</option>
         </select>
       </div>
-      <b-form-group>
-        <span>Document Requirement</span>
-        <input type="file" id="file" ref="file1" v-on:change="handleFileUpload1()" />
-        <!-- <span v-if="errors.file" class="text-danger">{{errors.file[0]}}</span> -->
-      </b-form-group>
+      <template v-for="doc in competition.documents">
+        <b-form-group :key="doc.name">
+          <div class="col-md-12 p-0">
+            <div class="col-md-4 p-0">
+
+          <span class="">{{doc.name}}:</span>
+            </div>
+            <div class="col-md p-0">
+          <!-- <span v-if="errors.file" class="text-danger">{{errors.file[0]}}</span> -->
+
+            </div>
+          </div>
+          <input type="file" id="file" class="" ref="file1" v-on:change="handleFileUpload1" />
+        </b-form-group>
+      </template>
     </modal>
     <!--  End Modal -->
   </div>
@@ -404,7 +414,7 @@ export default {
           if (this.paymentParticipantList[i] === this.modelParticipant) {
             this.paymentParticipantList.splice(i, 1);
           }
-        } 
+        }
       }
     },
     competition: function(val) {
@@ -491,8 +501,10 @@ export default {
     handleFileUpload() {
       this.file = this.$refs.file.files[0];
     },
-    handleFileUpload1() {
-      this.file = this.$refs.file1.files[0];
+    handleFileUpload1(event) {
+      // console.log(event);
+      // this.file = this.$refs.file1.files[0];
+      this.files.push(event.target.files[0]);
     },
     removeParticipant: function(participant) {
       this.paymentParticipantList.push(participant);
@@ -518,56 +530,37 @@ export default {
       if (d > new Date(this.competition.registration_due_date))
         return this.$toast.error("you are late to join this tournament");
 
+      let data = new FormData();
+      // data.append("file", this.file);
+      for(let i = 0; i<this.files.length; i++){
+        data.append("documents["+i+"]",this.files[i]);
+      }
+      data.append("status", "Pending");
+      data.append("competition_detail_id", this.registerCompId);
       if (this.official == 1) {
-        let data = new FormData();
-        data.append("file", this.file);
-        data.append("status", "Pending");
-        data.append("competition_detail_id", this.registerCompId);
         data.append("user_id", this.offParticipant);
         data.append("official", this.user.id);
-        this.$axios
-          .post("/participants", data, {
-            headers: { "Content-Type": "multipart/form-data" }
-          })
-          .then(resp => {
-            this.$toast.success("Success to Register Category");
-          })
-          .catch(e => {
-            if (e.response.status == 401)
-              this.$toast.error(e.response.data.message);
-            if (e.response.data.errors.user_id) {
-              if (
-                e.response.data.errors.user_id[0] ==
-                "The user id has already been taken."
-              )
-                this.$toast.error("You Have been Registered");
-            }
-          });
       } else {
-        let data = new FormData();
-        data.append("file", this.file);
-        data.append("status", "Pending");
-        data.append("competition_detail_id", this.registerCompId);
         data.append("user_id", this.user.id);
-        this.$axios
-          .post("/participants", data, {
-            headers: { "Content-Type": "multipart/form-data" }
-          })
-          .then(resp => {
-            this.$toast.success("Success to Register Category");
-          })
-          .catch(e => {
-            if (e.response.status == 401)
-              this.$toast.error(e.response.data.message);
-            if (e.response.data.errors.user_id) {
-              if (
-                e.response.data.errors.user_id[0] ==
-                "The user id has already been taken."
-              )
-                this.$toast.error("You Have been Registered");
-            }
-          });
       }
+      this.$axios
+        .post("/participants", data, {
+          headers: { "Content-Type": "multipart/form-data" }
+        })
+        .then(resp => {
+          this.$toast.success("Success to Register Category");
+        })
+        .catch(e => {
+          if (e.response.status == 401)
+            this.$toast.error(e.response.data.message);
+          if (e.response.data.errors.user_id) {
+            if (
+              e.response.data.errors.user_id[0] ==
+              "The user id has already been taken."
+            )
+              this.$toast.error("You Have been Registered");
+          }
+        });
     },
     currencyFormatted: function(num) {
       let p = parseInt(num)
@@ -636,6 +629,7 @@ export default {
   data() {
     return {
       file: null,
+      files: [],
       official: 0,
       users: [],
       paymentParticipant: [],
@@ -688,7 +682,8 @@ export default {
     this.$axios
       .get("/competitions/" + this.$route.params.id, {
         params: {
-          load: "competitionDetails.category,competitionDetails.participants,competitionDocuments"
+          load:
+            "competitionDetails.category,competitionDetails.participants,competitionDocuments"
         }
       })
       .then(resp => {
