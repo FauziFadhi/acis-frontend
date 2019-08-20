@@ -109,7 +109,10 @@
                     <td>{{index+1}}</td>
                     <td>{{participant.user.name}}</td>
                     <td>{{participant.competitionDetail.category.name}}</td>
-                    <td><a :href="storageApi+participant.doc">Doc</a></td>
+                    <td>
+                      <!-- {{participant}} -->
+                      <a v-for="(doc,index) in competition.documents" :key="doc.name" :href="storageApi+participant.documents[index].uri"> | {{doc.name}}</a>
+                    </td>
                   </tr>
                 </tbody>
               </table>
@@ -206,7 +209,7 @@ export default {
       this.$axios
         .get("/payment-receipts", {
           params: {
-            load: "participants.competitionDetail.category",
+            load: "participants.competitionDetail.category,participants.documents",
             participantId: val
           }
         })
@@ -223,7 +226,7 @@ export default {
       .get("/competitions/" + this.$route.params.id, {
         params: {
           load:
-            "competitionDetails.category,competitionDetails.participants.paymentReceipts"
+            "competitionDetails.category,competitionDetails.participants.paymentReceipts,competitionDocuments"
         }
       })
 
